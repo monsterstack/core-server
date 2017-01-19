@@ -43,6 +43,10 @@ module.exports = class Server {
     return this.ioRedis;
   }
 
+  getHttp() {
+    return this.http;
+  }
+
   getMe() {
     let descriptor = {
       type: this.name,
