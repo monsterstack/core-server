@@ -116,7 +116,8 @@ class Server {
   announce(exitHandlerFactory, modelRepository) {
     let makeAnnouncement = true;
     if(makeAnnouncement === true) {
-      this._bindCleanUp(exitHandlerFactory, modelRepository);
+      if(exitHandlerFactory)
+        this._bindCleanUp(exitHandlerFactory, modelRepository);
     }
 
     if(makeAnnouncement === true) {
