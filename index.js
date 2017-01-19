@@ -129,6 +129,7 @@ module.exports = class Server {
         this.proxyLib.connect({addr:`http://${this.discoveryHost}:${this.discoveryPort}`}, (err, p) => {
           p.bind({ descriptor: me, types: [] });
           self.boundProxy = p;
+          self.app.proxy = p;
         });
       }).catch((err) => {
         console.log(err);
@@ -140,13 +141,13 @@ module.exports = class Server {
     console.log("Loading Http Routes");
     glob(appRoot.path + "/api/v1/routes/*.routes.js", {}, (err, files) => {
       files.forEach((file) => {
-        require(file)(this.app, this.boundProxy);
+        require(file)(this.app);
       });
     });
 
     glob(appRoot.path + "/app/routes/*.routes.js", {}, (err, files) => {
       files.forEach((file) => {
-        require(file)(this.app, this.boundProxy);
+        require(file)(this.app);
       });
     });
   }
