@@ -7,6 +7,7 @@ const express = require('express');
 const path = require('path');
 const appRoot = require('app-root-path');
 
+
 module.exports = class Server {
   constructor(name, announcement, options) {
     this.id = require('node-uuid').v1();
