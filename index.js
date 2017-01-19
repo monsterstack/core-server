@@ -116,9 +116,7 @@ class Server {
   announce(exitHandlerFactory) {
     let makeAnnouncement = true;
     if(makeAnnouncement === true) {
-      if(exitHandlerFactory) {
-        this._bindCleanUp(exitHandlerFactory);
-      }
+      this._bindCleanUp(exitHandlerFactory);
     }
 
     if(makeAnnouncement === true) {
