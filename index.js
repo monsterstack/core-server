@@ -7,8 +7,7 @@ const express = require('express');
 const path = require('path');
 const appRoot = require('app-root-path');
 
-
-module.exports = class Server {
+class Server {
   constructor(name, announcement, options) {
     this.id = require('node-uuid').v1();
     this.name = name;
@@ -174,3 +173,9 @@ module.exports = class Server {
   }
 
 }
+
+
+module.exports.Error = require('./errors/error');
+module.exports.HealthService = require('./services/healthService');
+module.exports.SwaggerService = require('./services/swaggerService');
+module.exports.Server = Server;
