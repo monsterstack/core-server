@@ -113,11 +113,11 @@ class Server {
 
   }
 
-  announce(exitHandlerFactory, modelRepository) {
+  announce(exitHandlerFactory) {
     let makeAnnouncement = true;
     if(makeAnnouncement === true) {
       if(exitHandlerFactory) {
-        this._bindCleanUp(exitHandlerFactory, modelRepository);
+        this._bindCleanUp(exitHandlerFactory);
       }
     }
 
@@ -160,7 +160,7 @@ class Server {
     process.stdin.resume();//so the program will not close instantly
 
     // Exit handler
-    let exitHandler = exitHandlerFactory(this.id, modelRepository);
+    let exitHandler = exitHandlerFactory(this.id);
 
     //do something when app is closing
     process.on('exit', exitHandler.bind(null,{cleanup:true}));
