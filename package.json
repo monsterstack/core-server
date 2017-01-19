@@ -1,0 +1,22 @@
+{
+  "name": "core-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "app-root-path": "^2.0.1",
+    "config": "^1.24.0",
+    "cors": "^2.8.1",
+    "express": "^4.14.0",
+    "glob": "^7.1.1",
+    "path": "^0.12.7",
+    "promise": "^7.1.1",
+    "socket.io": "^1.7.2",
+    "socket.io-redis": "^3.1.0"
+  }
+}
