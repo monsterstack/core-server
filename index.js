@@ -47,6 +47,10 @@ module.exports = class Server {
     return this.http;
   }
 
+  getApp() {
+    return this.app;
+  }
+
   getMe() {
     let descriptor = {
       type: this.name,
@@ -82,9 +86,7 @@ module.exports = class Server {
       self.ioredis = require('socket.io-redis');
       console.log('Enabling cors');
       self.app.use(cors());
-      self.app.set('view engine', 'ejs');
-      self.app.use('/portal', express.static(path.join(__dirname + '/portal')));
-      self.app.use('/public', express.static(path.join(__dirname, 'public')));
+
       console.log('Resolve');
       resolve();
 
