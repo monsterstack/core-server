@@ -82,8 +82,8 @@ class Server {
       self.app = require('express')();
       console.log('Assign express');
       self.http = require('http').Server(self.app);
-      self.io = require('socket.io')(self.http);
-      self.ioredis = require('socket.io-redis');
+      // Init Socket IO
+      self._initSocketIO();
       console.log('Enabling cors');
       self.app.use(cors());
 
@@ -152,6 +152,17 @@ class Server {
     });
   }
 
+  _initSocketIO() {
+    if(config.websockets) {
+      if(config.websockets === true) {
+        self.io = require('socket.io')(self.http);
+        self.ioredis = require('socket.io-redis');
+      }
+    } else {
+      self.io = require('socket.io')(self.http);
+      self.ioredis = require('socket.io-redis');
+    }
+  }
   /**
    * Cleanup handler
    */
