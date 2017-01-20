@@ -154,7 +154,7 @@ class Server {
 
   _initSocketIO() {
     if(config.websockets) {
-      if(config.websockets === true) {
+      if(config.websockets.enabled === true) {
         self.io = require('socket.io')(self.http);
         self.ioredis = require('socket.io-redis');
       }
