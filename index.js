@@ -6,6 +6,7 @@ const cors = require('cors');
 const express = require('express');
 const path = require('path');
 const appRoot = require('app-root-path');
+const bodyParser = require('body-parser')
 
 class Server {
   constructor(name, announcement, options) {
@@ -86,6 +87,11 @@ class Server {
       self.ioredis = require('socket.io-redis');
       console.log('Enabling cors');
       self.app.use(cors());
+
+      app.use(bodyParser.json({ type: 'application/json' }))
+
+      // parse an HTML body into a string
+      app.use(bodyParser.text({ type: 'text/html' }))
 
       console.log('Resolve');
       resolve();
