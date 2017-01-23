@@ -88,10 +88,10 @@ class Server {
       console.log('Enabling cors');
       self.app.use(cors());
 
-      app.use(bodyParser.json({ type: 'application/json' }))
+      self.app.use(bodyParser.json({ type: 'application/json' }))
 
       // parse an HTML body into a string
-      app.use(bodyParser.text({ type: 'text/html' }))
+      self.app.use(bodyParser.text({ type: 'text/html' }))
 
       console.log('Resolve');
       resolve();
