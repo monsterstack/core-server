@@ -14,6 +14,10 @@ class ProxyCacheService {
         }).catch((err) => {
           reject(err);
         });
+      } else {
+        // Nothing
+        console.log("------- No Proxy");
+        resolve([]);
       }
     });
     return p;
