@@ -9,6 +9,7 @@ class ProxyCacheService {
   cache() {
     let p = new Promise((resolve, reject) => {
       if(self.proxy) {
+        console.log('Fetching cache from proxy table');
         self.proxy.table().then((cache) => {
           resolve(cache);
         }).catch((err) => {
