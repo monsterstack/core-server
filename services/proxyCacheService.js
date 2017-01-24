@@ -7,8 +7,16 @@ class ProxyCacheService {
   }
 
   cache() {
-    if(this.proxy) console.log(this.proxy);
-    return this.proxy.table();
+    let p = new Promise((resolve, reject) => {
+      if(self.proxy) {
+        self.proxy.table().then((cache) => {
+          resolve(cache);
+        }).catch((err) => {
+          reject(err);
+        });
+      }
+    });
+    return p;
   }
 }
 
