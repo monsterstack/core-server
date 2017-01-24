@@ -8,8 +8,6 @@ const path = require('path');
 const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
 
-const DEFAULT_TYPES_QUERY = ['TenantService'];
-
 class Server {
   constructor(name, announcement, options) {
     this.id = require('node-uuid').v1();
@@ -135,7 +133,7 @@ class Server {
         console.log(me);
         console.log(`http://${this.discoveryHost}:${this.discoveryPort}`);
         this.proxyLib.connect({addr:`http://${this.discoveryHost}:${this.discoveryPort}`}, (err, p) => {
-          p.bind({ descriptor: me, types: DEFAULT_TYPES_QUERY });
+          p.bind({ descriptor: me, types: [] });
           self.boundProxy = p;
           self.app.proxy = p;
         });
