@@ -87,7 +87,7 @@ class Server {
       self.ioredis = require('socket.io-redis');
       console.log('Enabling cors');
       self.app.use(cors());
-
+      self.app.use(bodyParser.urlencoded({ extended: true }));
       self.app.use(bodyParser.json({ type: 'application/json' }))
 
       // parse an HTML body into a string
@@ -133,7 +133,7 @@ class Server {
         console.log(me);
         console.log(`http://${this.discoveryHost}:${this.discoveryPort}`);
         this.proxyLib.connect({addr:`http://${this.discoveryHost}:${this.discoveryPort}`}, (err, p) => {
-          p.bind({ descriptor: me, types: [] });
+          p.bind({ descriptor: me, types: ['TenantService'] });
           self.boundProxy = p;
           self.app.proxy = p;
         });
