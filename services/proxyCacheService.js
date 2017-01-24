@@ -7,6 +7,7 @@ class ProxyCacheService {
   }
 
   cache() {
+    if(this.proxy) console.log(this.proxy);
     return this.proxy.table();
   }
 }
