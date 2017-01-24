@@ -12,8 +12,10 @@ class ProxyCacheService {
       if(self.proxy) {
         console.log('Fetching cache from proxy table');
         self.proxy.table().then((cache) => {
+          console.log('Got cache from proxy table');
           resolve(cache);
         }).catch((err) => {
+          console.log(err);
           reject(err);
         });
       } else {
