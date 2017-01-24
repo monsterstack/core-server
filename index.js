@@ -184,4 +184,5 @@ class Server {
 module.exports.Error = require('./errors/error');
 module.exports.HealthService = require('./services/healthService');
 module.exports.SwaggerService = require('./services/swaggerService');
+module.exports.ProxyCacheService = require('./services/proxyCacheService');
 module.exports.Server = Server;
