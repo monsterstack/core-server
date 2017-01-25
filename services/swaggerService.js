@@ -17,6 +17,7 @@ class SwaggerService {
       let basePath = self.basePath;
       swagger.host = host;
       swagger.basePath = basePath;
+      swagger.schemes = ['http'];
 
       resolve(swagger);
     });
