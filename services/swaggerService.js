@@ -17,8 +17,7 @@ class SwaggerService {
       //@TODO: Base Path should be in config..
       let basePath = self.basePath;
       let port = config.port;
-      swagger.host = `${host}`;
-      swagger.port = `${port}`;
+      swagger.host = `${host}:${port}`;
       swagger.basePath = basePath;
       swagger.schemes = ['http'];
 
