@@ -8,7 +8,7 @@ class ServiceError {
 
   toJSON() {
     return {
-      errorMessage: this.message
+      errorMessage: this.errorMessage
     };
   }
 
