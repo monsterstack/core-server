@@ -13,7 +13,7 @@ class Error {
   }
 
   writeResponse(res) {
-    res.status(this.status).send(this.toJSON());
+    res.status(this.status).send({ errorMessage: this.message });
   }
 }
 
