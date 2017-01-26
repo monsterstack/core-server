@@ -1,6 +1,6 @@
 'use strict';
 
-class Error {
+class ServiceError {
   constructor(status, message) {
     this.status = status;
     this.message = message;
@@ -17,4 +17,4 @@ class Error {
   }
 }
 
-module.exports = Error;
+module.exports = ServiceError;
