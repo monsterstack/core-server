@@ -3,7 +3,7 @@
 class ServiceError {
   constructor(status, message) {
     this.status = status;
-    this.message = message;
+    this.errorMessage = message;
   }
 
   toJSON() {
@@ -13,7 +13,7 @@ class ServiceError {
   }
 
   writeResponse(res) {
-    res.status(this.status).send({ errorMessage: this.message });
+    res.status(this.status).send({ errorMessage: this.errorMessage });
   }
 }
 
