@@ -96,8 +96,6 @@ class Server {
       // parse an HTML body into a string
       self.app.use(bodyParser.text({ type: 'text/html' }));
 
-      let AuthCheckMiddleware = new AuthCheckMiddleware();
-
       self.app.authCheck = new AuthCheckMiddleware();
 
       console.log('Resolve');
