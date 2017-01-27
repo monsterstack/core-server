@@ -92,7 +92,11 @@ class Server {
       self.app.use(bodyParser.json({ type: 'application/json' }))
 
       // parse an HTML body into a string
-      self.app.use(bodyParser.text({ type: 'text/html' }))
+      self.app.use(bodyParser.text({ type: 'text/html' }));
+
+      let AuthCheckMiddleware = new AuthCheckMiddleware();
+
+      app.authCheck = new AuthCheckMiddleware();
 
       console.log('Resolve');
       resolve();
