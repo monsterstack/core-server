@@ -8,6 +8,8 @@ const path = require('path');
 const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
 
+const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
+
 class Server {
   constructor(name, announcement, types, options) {
     this.id = require('node-uuid').v1();
