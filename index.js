@@ -7,6 +7,7 @@ const express = require('express');
 const path = require('path');
 const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
+const bearerToken = require('express-bearer-token');
 
 const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
 
@@ -91,7 +92,8 @@ class Server {
       console.log('Enabling cors');
       self.app.use(cors());
       self.app.use(bodyParser.urlencoded({ extended: true }));
-      self.app.use(bodyParser.json({ type: 'application/json' }))
+      self.app.use(bodyParser.json({ type: 'application/json' }));
+      self.app.use(bearerToken());
 
       // parse an HTML body into a string
       self.app.use(bodyParser.text({ type: 'text/html' }));
