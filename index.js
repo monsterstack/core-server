@@ -195,4 +195,3 @@ module.exports.HealthService = require('./services/healthService');
 module.exports.SwaggerService = require('./services/swaggerService');
 module.exports.ProxyCacheService = require('./services/proxyCacheService');
 module.exports.Server = Server;
-module.exports.Cluster = Cluster;
