@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
 
 const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
+const RealizationCheckMiddleware = require('discovery-middleware').RealizationCheckMiddleware;
 
 class Server {
   constructor(name, announcement, types, options) {
@@ -99,6 +100,7 @@ class Server {
       self.app.use(bodyParser.text({ type: 'text/html' }));
 
       self.app.authCheck = new AuthCheckMiddleware(self.app);
+      self.app.realizationCheck = new RealizationCheckMiddleware(self.app);
 
       console.log('Resolve');
       resolve();
@@ -143,6 +145,7 @@ class Server {
           p.bind({ descriptor: me, types: self.types });
           self.boundProxy = p;
           self.app.proxy = p;
+          self.app.dependencies = self.types;
         });
       }).catch((err) => {
         console.log(err);
