@@ -9,6 +9,7 @@ const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
 
+const Cluster = require('./libs/cluster');
 const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
 const RealizationCheckMiddleware = require('discovery-middleware').RealizationCheckMiddleware;
 
