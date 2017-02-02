@@ -129,13 +129,12 @@ class Server {
   }
 
   announce(exitHandlerFactory, modelRepository) {
-    let makeAnnouncement = true;
-    if(makeAnnouncement === true) {
+    if(this.makeAnnouncement === true) {
       if(exitHandlerFactory)
         this._bindCleanUp(exitHandlerFactory, modelRepository);
     }
 
-    if(makeAnnouncement === true) {
+    if(this.makeAnnouncement === true) {
       let self = this;
       // Dispatch Proxy -- init / announce
       this.getMe().then((me) => {
@@ -195,3 +194,4 @@ module.exports.HealthService = require('./services/healthService');
 module.exports.SwaggerService = require('./services/swaggerService');
 module.exports.ProxyCacheService = require('./services/proxyCacheService');
 module.exports.Server = Server;
+module.exports.Cluster = Cluster;
