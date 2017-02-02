@@ -152,6 +152,23 @@ class Server {
     }
   }
 
+  query(exitHandlerFactory, modelRepository) {
+    let self = this;
+    // Dispatch Proxy -- init / announce
+    this.getMe().then((me) => {
+      console.log(me);
+      console.log(`http://${this.discoveryHost}:${this.discoveryPort}`);
+      this.proxyLib.connect({addr:`http://${this.discoveryHost}:${this.discoveryPort}`}, (err, p) => {
+        p.bind({ types: self.types });
+        self.boundProxy = p;
+        self.app.proxy = p;
+        self.app.dependencies = self.types;
+      });
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
+
   loadHttpRoutes() {
     console.log("Loading Http Routes");
     glob(appRoot.path + "/api/v1/routes/*.routes.js", {}, (err, files) => {
