@@ -129,6 +129,7 @@ class Server {
   }
 
   announce(exitHandlerFactory, modelRepository) {
+    this.makeAnnouncement = true; /// NOt being set in constructor for some reason @TODO: FIX
     if(this.makeAnnouncement === true) {
       if(exitHandlerFactory)
         this._bindCleanUp(exitHandlerFactory, modelRepository);
