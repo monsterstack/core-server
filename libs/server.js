@@ -132,7 +132,8 @@ class Server {
         config.port = 0;
       }
 
-      self.http.listen(config.port, () => {
+      self.app.server = http.createServer(self.app);
+      self.app.server.listen(config.port, () => {
         console.log(`listening on *:${config.port}`);
         resolve();
       });
