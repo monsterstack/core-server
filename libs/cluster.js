@@ -29,6 +29,8 @@ class Cluster {
 
     this.numCPUs = require('os').cpus().length;
 
+    this.proxy = require('discovery-proxy');
+
     if(options.numWorkers) {
       this.numCPUs = options.numWorkers;
     }
