@@ -3,7 +3,7 @@ const redis = require('redis');
 const config = require('config');
 const cluster = require('cluster');
 const net = require('net');
-const Leader = require('./libs/leader');
+const Leader = require('./leader');
 
 // Service ID
 const ID = require('node-uuid').v1();
