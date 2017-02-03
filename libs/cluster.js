@@ -2,6 +2,7 @@
 const redis = require('redis');
 const config = require('config');
 const cluster = require('cluster');
+const net = require('net');
 
 // Service ID
 const ID = require('node-uuid').v1();
