@@ -4,7 +4,7 @@ const config = require('config');
 const cluster = require('cluster');
 const net = require('net');
 const Leader = require('./leader');
-
+const hash = require( './hash');
 // Service ID
 const ID = require('node-uuid').v1();
 
