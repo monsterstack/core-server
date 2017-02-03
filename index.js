@@ -9,6 +9,8 @@ const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
 
+const Cluster = require('./libs/cluster').Cluster;
+
 const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
 const RealizationCheckMiddleware = require('discovery-middleware').RealizationCheckMiddleware;
 
@@ -128,8 +130,13 @@ class Server {
 
   }
 
+  /**
+   * Announce the 'ServiceDescriptor' to the DiscoveryService
+   * In a typical local Cluster setup, the cluster master does the announcement.
+   * When running a service standalone, the service will be able to announce and query.
+   */
   announce(exitHandlerFactory, modelRepository) {
-    this.makeAnnouncement = true; /// NOt being set in constructor for some reason @TODO: FIX
+    this.makeAnnouncement = true; /// Not being set in constructor for some reason @TODO: FIX
     if(this.makeAnnouncement === true) {
       if(exitHandlerFactory)
         this._bindCleanUp(exitHandlerFactory, modelRepository);
@@ -153,6 +160,17 @@ class Server {
     }
   }
 
+  /**
+   * Perform streaming query against Discovery Service
+   * Note that no announcement occurs.
+   *
+   * Strategy behind this method is that in a local Cluster, the master
+   * will announce and all the workers will query.  This will result in 'n'
+   * worker streaming query connections to the Discovery Service and only One
+   * announcement of a 'ServiceDescriptor' representing all the workers.
+   *
+   * Remember all access to a 'worker' runs through the master port binding.
+   */
   query(exitHandlerFactory, modelRepository) {
     let self = this;
     // Dispatch Proxy -- init / announce
@@ -187,6 +205,7 @@ class Server {
 
   /**
    * Cleanup handler
+   * Perform any necessary cleanup for the server on exit.
    */
   _bindCleanUp(exitHandlerFactory, modelRepository) {
     process.stdin.resume();//so the program will not close instantly
@@ -211,4 +230,5 @@ module.exports.ServiceError = require('./errors/error');
 module.exports.HealthService = require('./services/healthService');
 module.exports.SwaggerService = require('./services/swaggerService');
 module.exports.ProxyCacheService = require('./services/proxyCacheService');
+module.exports.Cluster = Cluster;
 module.exports.Server = Server;

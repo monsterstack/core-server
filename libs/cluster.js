@@ -3,17 +3,35 @@ const redis = require('redis');
 const config = require('config');
 const cluster = require('cluster');
 
+// Service ID
+const ID = require('node-uuid').v1();
 
 class Cluster {
-  constructor(name, announcement, types, options) {
+  /**
+   * Create Cluster
+   * @param name  Cluster Group Name
+   * @param announcement ServiceDescriptor details about the Service Cluster being
+   *        formed -- Required
+   * @param options Configuration Options
+   *
+   *
+   * Valid Options:
+   *
+   */
+  constructor(name, announcement, options) {
     this.clusterName = name;
-    this.clusterArgs = ['--use', 'http', '--randomWorkerPort', 'true'];
+    this.clusterArgs = ['--use', 'http', '--randomWorkerPort', 'true', '--announce', 'false'];
     this.cluster = cluster;
+
+    // Round Robin Scheduling
     this.cluster.schedulingPolicy = cluster.SCHED_RR;
 
     this.iAmMaster = false;
 
-    this.types = types || [];
+    // All hell breaks loose if announcement is missing.
+    if(announcement === undefined)
+      throw new Error("Missing Announcement");
+
     this.announcement = announcement;
 
     this.workers = [];
@@ -25,17 +43,23 @@ class Cluster {
     });
   }
 
+  /**
+   * Get Me
+   * Generate ServiceDescriptor from announcement data and config.
+   * Also, supplement with endpoint details using known ip address and configured port.
+   * @param config Configuration
+   */
   getMe(config) {
     let descriptor = {
-      type: announcement.type,
+      type: this.announcement.type,
       healthCheckRoute: '/health',
       schemaRoute: '/swagger.json',
       timestamp: new Date(),
       id: ID,
-      region: announcement.region,
-      stage: announcement.stage,
+      region: this.announcement.region,
+      stage: this.announcement.stage,
       status: 'Online',
-      version: announcement.version
+      version: this.announcement.version
     };
 
     let p = new Promise((resolve, reject) => {
@@ -47,6 +71,13 @@ class Cluster {
     return p;
   }
 
+  /**
+   * Bind ExitHandler to process.
+   * Support supplemental cleanup efforts.
+   *
+   * Sample ExitHandler.
+   * @TODO: Add Sample Here.
+   */
   bindExitHandler(exitHandler) {
     process.stdin.resume();//so the program will not close instantly
     //do something when app is closing
@@ -59,7 +90,13 @@ class Cluster {
     process.on('uncaughtException', exitHandler.bind(null, {cleanup:true}));
   }
 
-
+  /**
+   * Start Local Cluster of Service nodes.
+   * Establish a Cluster Group Name and attempt to establish a leader, amongst
+   * external cluster members.
+   *
+   * self.name will be used as the Cluster Group Name.
+   */
   start() {
     let exitHandler = require('discovery-proxy').exitHandlerFactory(ID, model);
     this.bindExitHandler(exitHandler);
@@ -109,7 +146,8 @@ class Cluster {
               if(err) {
                 console.log(err);
               } else {
-                p.bind({ descriptor: me, types: self.types });
+                // Clusters only announce.  Leave query to workers.
+                p.bind({ descriptor: me, types: [] });
               }
             });
           }).catch((err) => {
