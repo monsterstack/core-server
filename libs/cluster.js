@@ -98,8 +98,6 @@ class Cluster {
    * self.name will be used as the Cluster Group Name.
    */
   start() {
-    let exitHandler = require('discovery-proxy').exitHandlerFactory(ID, model);
-    this.bindExitHandler(exitHandler);
     let self = this;
     if (self.cluster.isMaster) {
 
