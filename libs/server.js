@@ -97,10 +97,10 @@ class Server {
       self.app.use(bearerToken());
 
       // Clustered Socket IO using Redis -- Move out of lifecycle
-      // self.io.adapter(self.ioredis({
-      //   host: config.redis.host,
-      //   port: 6379
-      // }));
+      self.io.adapter(self.ioredis({
+        host: config.redis.host,
+        port: 6379
+      }));
 
       // Authorization of Client Connection -- Move out of lifecycle
       // authSetup(io, {
@@ -145,7 +145,7 @@ class Server {
 
         // Emulate a connection event on the server by emitting the
         // event with the connection the master sent us.
-        self.http.emit('connection', connection);
+        //self.http.emit('connection', connection);
 
         connection.resume();
       });
