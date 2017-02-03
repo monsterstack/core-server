@@ -11,8 +11,10 @@
   "dependencies": {
     "app-root-path": "^2.0.1",
     "body-parser": "^1.16.0",
+    "bronto": "^0.1.0",
     "config": "^1.24.0",
     "cors": "^2.8.1",
+    "discovery-middleware": "https://github.com/monsterstack/discovery-middleware#development",
     "ejs": "^2.5.5",
     "express": "^4.14.0",
     "express-bearer-token": "^2.1.0",
@@ -21,7 +23,6 @@
     "path": "^0.12.7",
     "promise": "^7.1.1",
     "security-middleware": "https://github.com/monsterstack/security-middleware#development",
-    "discovery-middleware": "https://github.com/monsterstack/discovery-middleware#development",
     "socket.io": "^1.7.2",
     "socket.io-redis": "^3.1.0"
   }
