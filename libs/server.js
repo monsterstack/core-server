@@ -1,5 +1,13 @@
 'use strict';
+const glob = require('glob');
 const Promise = require('promise');
+const config = require('config');
+const cors = require('cors');
+const express = require('express');
+const path = require('path');
+const appRoot = require('app-root-path');
+const bodyParser = require('body-parser');
+const bearerToken = require('express-bearer-token');
 
 class Server {
   constructor(name, announcement, types, options) {
