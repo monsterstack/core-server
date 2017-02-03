@@ -96,6 +96,19 @@ class Server {
       self.app.use(bodyParser.json({ type: 'application/json' }));
       self.app.use(bearerToken());
 
+      // Clustered Socket IO using Redis -- Move out of lifecycle
+      self.io.adapter(self.ioredis({
+        host: config.redis.host,
+        port: 6379
+      }));
+
+      // Authorization of Client Connection -- Move out of lifecycle
+      // authSetup(io, {
+      //   authenticate: (socket, data, callback) => {
+      //       callback(null, true);
+      //   }
+      // });
+
       // parse an HTML body into a string
       self.app.use(bodyParser.text({ type: 'text/html' }));
       console.log("Intializing Middleware")
