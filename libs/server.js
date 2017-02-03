@@ -1,4 +1,5 @@
 'use strict';
+const Promise = require('promise');
 
 class Server {
   constructor(name, announcement, types, options) {
