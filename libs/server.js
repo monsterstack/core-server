@@ -9,6 +9,9 @@ const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
 
+const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
+const RealizationCheckMiddleware = require('discovery-middleware').RealizationCheckMiddleware;
+
 class Server {
   constructor(name, announcement, types, options) {
     this.id = require('node-uuid').v1();
