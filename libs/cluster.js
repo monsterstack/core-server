@@ -16,12 +16,19 @@ class Cluster {
    *
    *
    * Valid Options:
-   *
+   * - numWorkers ( integer )
+   * - discoveryHost ( string )
    */
   constructor(name, announcement, options) {
     this.clusterName = name;
     this.clusterArgs = ['--use', 'http', '--randomWorkerPort', 'true', '--announce', 'false'];
     this.cluster = cluster;
+
+    this.numCPUs = require('os').cpus().length;
+
+    if(options.numWorkers) {
+      this.numCPUs = options.numWorkers;
+    }
 
     // Round Robin Scheduling
     this.cluster.schedulingPolicy = cluster.SCHED_RR;
@@ -102,7 +109,7 @@ class Cluster {
     if (self.cluster.isMaster) {
 
       // Fork workers. One per CPU for maximum effectiveness
-      for (let i = 0; i < numCPUs; i++) {
+      for (let i = 0; i < self.numCPUs; i++) {
           !function spawn(i) {
               self.workers[i] = self.cluster.fork();
 
