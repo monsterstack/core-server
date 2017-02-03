@@ -66,6 +66,7 @@ class Cluster {
       type: this.announcement.type,
       healthCheckRoute: '/health',
       schemaRoute: '/swagger.json',
+      docsPath: this.announcement.docsPath,
       timestamp: new Date(),
       id: ID,
       region: this.announcement.region,
