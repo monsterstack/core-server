@@ -64,7 +64,7 @@ class Cluster {
   getMe(config) {
     console.log(this.announcement);
     let descriptor = {
-      type: this.announcement.type,
+      type: this.announcement.name,
       healthCheckRoute: '/health',
       schemaRoute: '/swagger.json',
       docsPath: this.announcement.docsPath,
