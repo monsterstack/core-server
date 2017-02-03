@@ -132,7 +132,7 @@ class Server {
         config.port = 0;
       }
 
-      let server = self.http.listen(config.port, () => {
+      let server = self.app.listen(config.port, () => {
         console.log(`listening on *:${config.port}`);
         resolve();
       });
