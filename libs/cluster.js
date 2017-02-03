@@ -62,6 +62,7 @@ class Cluster {
    * @param config Configuration
    */
   getMe(config) {
+    console.log(this.announcement);
     let descriptor = {
       type: this.announcement.type,
       healthCheckRoute: '/health',
