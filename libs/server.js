@@ -116,6 +116,7 @@ class Server {
       self.app.realizationCheck = new RealizationCheckMiddleware(self.app);
 
       console.log('Resolve');
+
       resolve();
 
     });
@@ -131,9 +132,22 @@ class Server {
         config.port = 0;
       }
 
-      self.http.listen(config.port, () => {
+      let server = self.http.listen(config.port, () => {
         console.log(`listening on *:${config.port}`);
         resolve();
+      });
+
+      // Listen to messages sent from the master. Ignore everything else.
+      process.on('message', function(message, connection) {
+        if (message !== 'sticky-session:connection') {
+            return;
+        }
+
+        // Emulate a connection event on the server by emitting the
+        // event with the connection the master sent us.
+        server.emit('connection', connection);
+
+        connection.resume();
       });
     });
 
