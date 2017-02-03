@@ -140,7 +140,7 @@ class Cluster {
           let worker,
               ipIndex = hash((c.remoteAddress || '').split(/\./g), seed);
           // Pass connection to worker
-          worker = self.workers[ipIndex%workers.length];
+          worker = self.workers[ipIndex%self.workers.length];
           worker.send('sticky-session:connection', c);
       });
 
