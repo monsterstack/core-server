@@ -132,7 +132,7 @@ class Server {
         config.port = 0;
       }
 
-      let server = self.app.listen(config.port, () => {
+      self.http.listen(config.port, () => {
         console.log(`listening on *:${config.port}`);
         resolve();
       });
@@ -145,7 +145,7 @@ class Server {
 
         // Emulate a connection event on the server by emitting the
         // event with the connection the master sent us.
-        server.emit('connection', connection);
+        self.app.server.emit('connection', connection);
 
         connection.resume();
       });
