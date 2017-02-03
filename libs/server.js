@@ -95,7 +95,7 @@ class Server {
 
       // parse an HTML body into a string
       self.app.use(bodyParser.text({ type: 'text/html' }));
-
+      console.log("Intializing Middleware")
       self.app.authCheck = new AuthCheckMiddleware(self.app);
       self.app.realizationCheck = new RealizationCheckMiddleware(self.app);
 
