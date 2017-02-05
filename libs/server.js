@@ -145,7 +145,7 @@ class Server {
 
         // Emulate a connection event on the server by emitting the
         // event with the connection the master sent us.
-        self.http.emit('connection', connection);
+        //self.http.emit('connection', connection);
 
         connection.resume();
       });
