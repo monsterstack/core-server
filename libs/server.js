@@ -87,7 +87,8 @@ class Server {
       console.log(`Starting ${self.name} on ${config.port}`);
       self.app = require('express')();
       console.log('Assign express');
-      self.http = require('http').Server(self.app);
+      self.http = require('http');
+      self.server = self.http.createServer(self.app);
       self.io = require('socket.io')(self.http);
       self.ioredis = require('socket.io-redis');
       console.log('Enabling cors');
@@ -132,7 +133,7 @@ class Server {
         config.port = 0;
       }
 
-      let server = self.app.listen(config.port, () => {
+      self.app.listen(config.port, () => {
         console.log(`listening on *:${config.port}`);
         resolve();
       });
@@ -145,7 +146,7 @@ class Server {
 
         // Emulate a connection event on the server by emitting the
         // event with the connection the master sent us.
-        server.emit('connection', connection);
+        self.server.emit('connection', connection);
 
         connection.resume();
       });
