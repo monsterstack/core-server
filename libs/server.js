@@ -87,9 +87,9 @@ class Server {
       console.log(`Starting ${self.name} on ${config.port}`);
       self.app = require('express')();
       console.log('Assign express');
-      //self.http = require('http').Server(self.app);
-      //self.io = require('socket.io')(self.http);
-      //self.ioredis = require('socket.io-redis');
+      self.http = require('http').Server(self.app);
+      self.io = require('socket.io')(self.http);
+      self.ioredis = require('socket.io-redis');
       console.log('Enabling cors');
       self.app.use(cors());
       self.app.use(bodyParser.urlencoded({ extended: true }));
@@ -132,13 +132,10 @@ class Server {
         config.port = 0;
       }
 
-      self.app.listen(config.port, () => {
+      self.http.listen(config.port, () => {
         console.log(`listening on *:${config.port}`);
         resolve();
       });
-
-      self.io = require('socket.io')(server);
-      self.ioredis = require('socket.io-redis');
 
 
       // Listen to messages sent from the master. Ignore everything else.
@@ -149,7 +146,7 @@ class Server {
 
         // Emulate a connection event on the server by emitting the
         // event with the connection the master sent us.
-        self.app.emit('connection', connection);
+        self.http.emit('connection', connection);
 
         connection.resume();
       });
