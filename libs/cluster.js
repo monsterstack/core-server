@@ -166,7 +166,7 @@ class Cluster {
             console.log("******************** Error **********")
             console.log(err);
           });
-        }, 500);
+        }, 2000);
       });
 
       /** Deal with Election of Group Leader **/
