@@ -198,6 +198,8 @@ class Server {
    */
   query(exitHandlerFactory, modelRepository) {
     let self = this;
+    if(exitHandlerFactory)
+      this._bindCleanUp(exitHandlerFactory, modelRepository);
     // Dispatch Proxy -- init / announce
     this.getMe().then((me) => {
       console.log(me);
