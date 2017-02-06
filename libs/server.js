@@ -73,8 +73,8 @@ class Server {
 
     let p = new Promise((resolve, reject) => {
       let ip = require('ip').address();
-      if(process.env.THIS_DOCKER_CONTAINER_IP)
-        ip = process.env.THIS_DOCKER_CONTAINER_IP;
+      if(process.env.CONTAINER_IP)
+        ip = process.env.CONTAINER_IP;
       descriptor.endpoint = "http://"+ip+":"+config.port
       resolve(descriptor);
     });
