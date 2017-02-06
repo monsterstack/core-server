@@ -72,10 +72,11 @@ class Server {
     };
 
     let p = new Promise((resolve, reject) => {
-      let ip = require('ip');
-      console.log(ip.address());
-      descriptor.endpoint = "http://"+ip.address()+":"+config.port
-      resolve(descriptor);
+      let ip = require('public-ip');
+      ip.v4().then((ip) => {
+        descriptor.endpoint = "http://"+ip.address()+":"+config.port
+        resolve(descriptor);
+      })
     });
     return p;
 
