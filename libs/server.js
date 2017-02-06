@@ -97,10 +97,10 @@ class Server {
       self.app.use(bearerToken());
 
       // Clustered Socket IO using Redis -- Move out of lifecycle
-      // self.io.adapter(self.ioredis({
-      //   host: config.redis.host,
-      //   port: 6379
-      // }));
+      self.io.adapter(self.ioredis({
+        host: config.redis.host,
+        port: config.redis.port
+      }));
 
       // Authorization of Client Connection -- Move out of lifecycle
       // authSetup(io, {
