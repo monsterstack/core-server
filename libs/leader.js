@@ -10,7 +10,6 @@ class Leader {
   constructor(redisCli, options) {
     this.redisCli = redisCli;
     this.options = options;
-    console.log(this.redisCli);
     if(this.redisCli)
       this.me = new Bronto({client: this.redisCli, subscriber: this.redisCli});
     else {
