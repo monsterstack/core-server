@@ -20,8 +20,8 @@ class Server {
     this.types = types || [];
 
     let useRandomWorkerPort = false;
-    let discoveryHost = '0.0.0.0';
-    let discoveryPort = 7616;
+    let discoveryHost = config.discovery.host;
+    let discoveryPort = config.discovery.port;
     let makeAnnouncement = false;
 
     if(options) {

@@ -154,7 +154,9 @@ class Cluster {
           //Dispatch Proxy -- init / announce
           self.getMe(config).then((me) => {
             console.log(me);
-            self.proxy.connect({addr:'http://0.0.0.0:'+config.port}, (err, p) => {
+            let discoveryHost = config.discovery.host;
+            let discoveryPort = config.discovery.port;
+            self.proxy.connect({addr:`http://${discoveryHost}:${discoveryPort}`}, (err, p) => {
               if(err) {
                 console.log(err);
               } else {
