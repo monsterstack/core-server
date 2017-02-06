@@ -22,7 +22,6 @@
     "ip": "^1.1.4",
     "path": "^0.12.7",
     "promise": "^7.1.1",
-    "public-ip": "^2.0.1",
     "redis": "~0.9.1",
     "security-middleware": "https://github.com/monsterstack/security-middleware#development",
     "socket.io": "^1.7.2",
