@@ -171,7 +171,8 @@ class Cluster {
 
       /** Deal with Election of Group Leader **/
       let redisClient = redis.createClient({
-        host: config.redis.host
+        host: config.redis.host,
+        port: config.redis.port || 6379
       });
       let leader = new Leader(redisClient);
       leader.onStepUp((groupName) => {
