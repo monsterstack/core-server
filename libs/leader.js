@@ -7,11 +7,12 @@ const Bronto = require('bronto');
  * cluster of nodes.
  */
 class Leader {
-  constructor(redisCli, options) {
+  constructor(redisCli, redisSub, options) {
     this.redisCli = redisCli;
+    this.redisSub = redisSub;
     this.options = options;
     if(this.redisCli)
-      this.me = new Bronto({client: this.redisCli, subscriber: this.redisCli});
+      this.me = new Bronto({client: this.redisCli, subscriber: this.redisSub});
     else {
       throw new Error("Missing Redis Client");
     }

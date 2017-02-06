@@ -174,7 +174,12 @@ class Cluster {
         host: config.redis.host,
         port: config.redis.port || 6379
       });
-      let leader = new Leader(redisClient);
+
+      let redisSub = redis.createClient({
+        host: config.redis.host,
+        port: config.redis.port || 6379
+      });
+      let leader = new Leader(redisClient, redisSub);
       leader.onStepUp((groupName) => {
         console.log("******************* I am master");
         console.log(groupName);
