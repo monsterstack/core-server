@@ -14,6 +14,9 @@ class SwaggerService {
     let self = this;
     let p = new Promise((resolve, reject) => {
       let host = ip.address();
+      if(process.env.HOST_IP) {
+        host = process.env.HOST_IP;
+      }
       //@TODO: Base Path should be in config..
       let basePath = self.basePath;
       let port = config.port;
