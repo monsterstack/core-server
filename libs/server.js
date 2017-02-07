@@ -2,6 +2,7 @@
 const glob = require('glob');
 const Promise = require('promise');
 const config = require('config');
+const stash = require('stash');
 const cors = require('cors');
 const express = require('express');
 const path = require('path');
@@ -91,6 +92,15 @@ class Server {
       self.http = require('http').Server(self.app);
       self.io = require('socket.io')(self.http);
       self.ioredis = require('socket.io-redis');
+
+      self.app.stash = (level, message) => {
+        stash.send({
+          '@timestamp': new Date(),
+          'message': message,
+          'level': level
+        });
+      };
+
       console.log('Enabling cors');
       self.app.use(cors());
       self.app.use(bodyParser.urlencoded({ extended: true }));

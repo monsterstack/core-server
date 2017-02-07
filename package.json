@@ -24,6 +24,7 @@
     "promise": "^7.1.1",
     "redis": "~0.9.1",
     "security-middleware": "https://github.com/monsterstack/security-middleware#development",
+    "stash": "https://github.com/monsterstack/stash#development",
     "socket.io": "^1.7.2",
     "socket.io-redis": "^3.1.0"
   }
