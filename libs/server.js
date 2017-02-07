@@ -138,13 +138,13 @@ class Server {
     let self = this;
     let p = new Promise((resolve, reject) => {
       console.log('Attempt bind on port');
-
+      let portNum = config.port;
       if(self.useRandomWorkerPort === true) {
-        config.port = 0;
+        portNum = 0;
       }
 
       self.http.listen(config.port, () => {
-        console.log(`listening on *:${config.port}`);
+        console.log(`listening on *:${portNum}`);
         resolve();
       });
 
