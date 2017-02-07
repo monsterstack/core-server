@@ -1,4 +1,5 @@
 'use strict';
+const random_port = require('random-port');
 const redis = require('redis');
 const config = require('config');
 const cluster = require('cluster');
@@ -53,6 +54,16 @@ class Cluster {
       args: this.clusterArgs,
       silent: false
     });
+  }
+
+  getPort() {
+    let port = config.port;
+    if(this.options.randomPort) {
+      // Compute random port.
+      port = random_port({from: 40000}, console.log);
+    }
+
+    return port;
   }
 
   /**
