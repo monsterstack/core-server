@@ -10,16 +10,20 @@ class SwaggerService {
     this.basePath = basePath;
   }
 
-  getSwagger() {
+  getSwagger(app) {
     let self = this;
     let p = new Promise((resolve, reject) => {
       let host = ip.address();
       if(process.env.HOST_IP) {
         host = process.env.HOST_IP;
       }
-      //@TODO: Base Path should be in config..
       let basePath = self.basePath;
       let port = config.port;
+      if(app) {
+        if(app.clusterPublicPort) {
+          port = app.clusterPublicPort;
+        }
+      }
       swagger.host = `${host}:${port}`;
       swagger.basePath = basePath;
       swagger.schemes = ['http'];
