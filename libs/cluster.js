@@ -1,5 +1,4 @@
 'use strict';
-const random_port = require('random-port');
 const redis = require('redis');
 const config = require('config');
 const cluster = require('cluster');
@@ -24,8 +23,6 @@ class Cluster {
    */
   constructor(name, announcement, options) {
     this.id = ID;
-    this.options = options;
-
     this.clusterName = name;
     this.clusterArgs = ['--use', 'http', '--randomWorkerPort', 'true', '--announce', 'false'];
     this.cluster = cluster;
@@ -58,28 +55,13 @@ class Cluster {
     });
   }
 
-  getPort() {
-    let p = new Promise((resolve, reject) => {
-      let port = config.port;
-      if(this.options.randomPort) {
-        // Compute random port.
-        random_port({from: 20000}, (port) => {
-          resolve(port);
-        });
-      } else {
-        resolve(port);
-      }
-    });
-    return p;
-  }
-
   /**
    * Get Me
    * Generate ServiceDescriptor from announcement data and config.
    * Also, supplement with endpoint details using known ip address and configured port.
    * @param config Configuration
    */
-  getMe(config, portOverride) {
+  getMe(config) {
     console.log(this.announcement);
     let descriptor = {
       type: this.announcement.name,
@@ -93,15 +75,13 @@ class Cluster {
       status: 'Online',
       version: this.announcement.version
     };
-    let endpointPort = config.port;
-    if(portOverride !== undefined)
-      endpointPort = portOverride;
+
     let p = new Promise((resolve, reject) => {
       let ip = require('ip').address();
       console.log(`HOST IP FROM env is ${process.env.HOST_IP}`)
       if(process.env.HOST_IP)
         ip = process.env.HOST_IP;
-      descriptor.endpoint = "http://"+ip+":"+endpointPort;
+      descriptor.endpoint = "http://"+ip+":"+config.port
       resolve(descriptor);
     });
     return p;
@@ -170,31 +150,27 @@ class Cluster {
           worker.send('sticky-session:connection', c);
       });
 
-      this.getPort().then((myPort) => {
-        console.log(`Listening on Port ${myPort}`);
-        server.listen(myPort, () => {
-          setTimeout(() => {
-            //Dispatch Proxy -- init / announce
-            self.getMe(config, myPort).then((me) => {
-              console.log(me);
-              let discoveryHost = config.discovery.host;
-              let discoveryPort = config.discovery.port;
-              self.proxy.connect({addr:`http://${discoveryHost}:${discoveryPort}`}, (err, p) => {
-                if(err) {
-                  console.log(err);
-                } else {
-                  // Clusters only announce.  Leave query to workers.
-                  p.bind({ descriptor: me, types: [] });
-                }
-              });
-            }).catch((err) => {
-              console.log("******************** Error **********")
-              console.log(err);
+
+      server.listen(config.port, () => {
+        setTimeout(() => {
+          //Dispatch Proxy -- init / announce
+          self.getMe(config).then((me) => {
+            console.log(me);
+            let discoveryHost = config.discovery.host;
+            let discoveryPort = config.discovery.port;
+            self.proxy.connect({addr:`http://${discoveryHost}:${discoveryPort}`}, (err, p) => {
+              if(err) {
+                console.log(err);
+              } else {
+                // Clusters only announce.  Leave query to workers.
+                p.bind({ descriptor: me, types: [] });
+              }
             });
-          }, 2000);
-        });
-      }).catch((err) => {
-        console.log("Failed to get a Port");
+          }).catch((err) => {
+            console.log("******************** Error **********")
+            console.log(err);
+          });
+        }, 2000);
       });
 
       /** Deal with Election of Group Leader **/
