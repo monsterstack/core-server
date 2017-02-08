@@ -62,7 +62,7 @@ class Cluster {
     let port = config.port;
     if(this.options.randomPort) {
       // Compute random port.
-      port = random_port({from: 40000}, console.log);
+      port = random_port({from: 20000}, console.log);
     }
 
     return port;
