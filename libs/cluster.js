@@ -165,7 +165,7 @@ class Cluster {
         setTimeout(() => {
           // Tell all workers about the cluster-public-ip
           self.workers.forEach((w) => {
-            //w.send('cluster-public-port', { port: server.address().port });
+            w.send({ type: 'cluster-public-port', value: server.address().port });
           });
 
           //Dispatch Proxy -- init / announce
