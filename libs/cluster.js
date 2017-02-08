@@ -94,7 +94,7 @@ class Cluster {
       version: this.announcement.version
     };
     let endpointPort = config.port;
-    if(portOverride)
+    if(portOverride !== undefined)
       endpointPort = portOverride;
     let p = new Promise((resolve, reject) => {
       let ip = require('ip').address();
