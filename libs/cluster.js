@@ -25,7 +25,7 @@ class Cluster {
   constructor(name, announcement, options) {
     this.id = ID;
     this.options = options;
-    
+
     this.clusterName = name;
     this.clusterArgs = ['--use', 'http', '--randomWorkerPort', 'true', '--announce', 'false'];
     this.cluster = cluster;
@@ -166,6 +166,7 @@ class Cluster {
       });
 
       let myPort = this.getPort();
+      console.log(`Listening on Port ${myPort}`);
       server.listen(myPort, () => {
         setTimeout(() => {
           //Dispatch Proxy -- init / announce
