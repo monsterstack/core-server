@@ -72,7 +72,7 @@ class Cluster {
    * Also, supplement with endpoint details using known ip address and configured port.
    * @param config Configuration
    */
-  getMe(config) {
+  getMe(config, portOverride) {
     console.log(this.announcement);
     let descriptor = {
       type: this.announcement.name,
@@ -86,13 +86,15 @@ class Cluster {
       status: 'Online',
       version: this.announcement.version
     };
-
+    let endpointPort = config.port;
+    if(portOverride)
+      endpointPort = portOverride;
     let p = new Promise((resolve, reject) => {
       let ip = require('ip').address();
       console.log(`HOST IP FROM env is ${process.env.HOST_IP}`)
       if(process.env.HOST_IP)
         ip = process.env.HOST_IP;
-      descriptor.endpoint = "http://"+ip+":"+config.port
+      descriptor.endpoint = "http://"+ip+":"+portOverride;
       resolve(descriptor);
     });
     return p;
@@ -161,11 +163,11 @@ class Cluster {
           worker.send('sticky-session:connection', c);
       });
 
-
-      server.listen(config.port, () => {
+      let myPort = this.getPort();
+      server.listen(myPort, () => {
         setTimeout(() => {
           //Dispatch Proxy -- init / announce
-          self.getMe(config).then((me) => {
+          self.getMe(config, myPort).then((me) => {
             console.log(me);
             let discoveryHost = config.discovery.host;
             let discoveryPort = config.discovery.port;
