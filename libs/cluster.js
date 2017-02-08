@@ -62,7 +62,9 @@ class Cluster {
     let port = config.port;
     if(this.options.randomPort) {
       // Compute random port.
-      port = random_port({from: 20000}, console.log);
+      port = random_port({from: 20000}, (port) => {
+
+      }));
     }
 
     return port;
@@ -165,28 +167,31 @@ class Cluster {
           worker.send('sticky-session:connection', c);
       });
 
-      let myPort = this.getPort();
-      console.log(`Listening on Port ${myPort}`);
-      server.listen(myPort, () => {
-        setTimeout(() => {
-          //Dispatch Proxy -- init / announce
-          self.getMe(config, myPort).then((me) => {
-            console.log(me);
-            let discoveryHost = config.discovery.host;
-            let discoveryPort = config.discovery.port;
-            self.proxy.connect({addr:`http://${discoveryHost}:${discoveryPort}`}, (err, p) => {
-              if(err) {
-                console.log(err);
-              } else {
-                // Clusters only announce.  Leave query to workers.
-                p.bind({ descriptor: me, types: [] });
-              }
+      this.getPort().then((myPort) => {
+        console.log(`Listening on Port ${myPort}`);
+        server.listen(myPort, () => {
+          setTimeout(() => {
+            //Dispatch Proxy -- init / announce
+            self.getMe(config, myPort).then((me) => {
+              console.log(me);
+              let discoveryHost = config.discovery.host;
+              let discoveryPort = config.discovery.port;
+              self.proxy.connect({addr:`http://${discoveryHost}:${discoveryPort}`}, (err, p) => {
+                if(err) {
+                  console.log(err);
+                } else {
+                  // Clusters only announce.  Leave query to workers.
+                  p.bind({ descriptor: me, types: [] });
+                }
+              });
+            }).catch((err) => {
+              console.log("******************** Error **********")
+              console.log(err);
             });
-          }).catch((err) => {
-            console.log("******************** Error **********")
-            console.log(err);
-          });
-        }, 2000);
+          }, 2000);
+        });
+      }).catch((err) => {
+        console.log("Failed to get a Port");
       });
 
       /** Deal with Election of Group Leader **/
