@@ -101,7 +101,7 @@ class Cluster {
       console.log(`HOST IP FROM env is ${process.env.HOST_IP}`)
       if(process.env.HOST_IP)
         ip = process.env.HOST_IP;
-      descriptor.endpoint = "http://"+ip+":"+portOverride;
+      descriptor.endpoint = "http://"+ip+":"+endpointPort;
       resolve(descriptor);
     });
     return p;
