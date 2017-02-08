@@ -24,6 +24,8 @@ class Cluster {
    */
   constructor(name, announcement, options) {
     this.id = ID;
+    this.options = options;
+    
     this.clusterName = name;
     this.clusterArgs = ['--use', 'http', '--randomWorkerPort', 'true', '--announce', 'false'];
     this.cluster = cluster;
