@@ -151,12 +151,7 @@ class Server {
 
       // Listen to messages sent from the master. Ignore everything else.
       process.on('message', (message, connection) => {
-        if (message.type) {
-            if(message.type === 'cluster-public-port') {
-              self.app.clusterPublicPort = message.value;
-            }
-            return;
-        } else if (message !== 'sticky-session:connection') {
+        if (message !== 'sticky-session:connection') {
             return;
         }
 
