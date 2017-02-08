@@ -59,15 +59,18 @@ class Cluster {
   }
 
   getPort() {
-    let port = config.port;
-    if(this.options.randomPort) {
-      // Compute random port.
-      port = random_port({from: 20000}, (port) => {
-
-      }));
-    }
-
-    return port;
+    let p = new Promise((resolve, reject) => {
+      let port = config.port;
+      if(this.options.randomPort) {
+        // Compute random port.
+        random_port({from: 20000}, (port) => {
+          resolve(port);
+        });
+      } else {
+        resolve(port);
+      }
+    });
+    return p;
   }
 
   /**
