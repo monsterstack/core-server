@@ -160,13 +160,13 @@ class Cluster {
       if(this.options.randomPort) {
         myPort = 0;
       }
-      
+
       server.listen(myPort, () => {
         setTimeout(() => {
           // Tell all workers about the cluster-public-ip
-          for(let w in self.workers) {
-            self.workers[w].send('cluster-public-ip', server.address().port);
-          }
+          self.workers.forEach((w) => {
+            w.send('cluster-public-ip', server.address().port);
+          })
 
           //Dispatch Proxy -- init / announce
           self.getMe(config, server.address().port).then((me) => {
