@@ -238,16 +238,13 @@ class Server {
     console.log("Loading Http Routes");
     let self = this;
     glob([appRoot.path + "/api/v1/routes/*.routes.js",appRoot.path + "/app/routes/*.routes.js"] , {}, (err, files) => {
-      files.forEach((file) => {
-        require(file)(self.app);
-      });
-    });
+      for(let f in files) {
+        require(files[f])(self.app);
+      }
 
-    // glob(appRoot.path + "/app/routes/*.routes.js", {}, (err, files) => {
-    //   files.forEach((file) => {
-    //     require(file)(self.app);
-    //   });
-    // });
+      // Last Middleware -- @TODO - Allow the passing in of a function to load additional outbound Middleware
+      self.app.use(self.circuitBreaker.outboundMiddleware(self.app));
+    });
   }
 
   /**
