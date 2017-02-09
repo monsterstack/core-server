@@ -20,6 +20,7 @@
     "express-bearer-token": "^2.1.0",
     "glob": "^7.1.1",
     "ip": "^1.1.4",
+    "multi-glob": "^1.0.1",
     "path": "^0.12.7",
     "promise": "^7.1.1",
     "random-port": "^0.1.0",

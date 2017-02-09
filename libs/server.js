@@ -1,5 +1,5 @@
 'use strict';
-const glob = require('glob');
+const glob = require('multi-glob');
 const Promise = require('promise');
 const config = require('config');
 const stash = require('stash');
@@ -237,17 +237,17 @@ class Server {
   loadHttpRoutes() {
     console.log("Loading Http Routes");
     let self = this;
-    glob(appRoot.path + "/api/v1/routes/*.routes.js", {}, (err, files) => {
+    glob([appRoot.path + "/api/v1/routes/*.routes.js",appRoot.path + "/app/routes/*.routes.js"] , {}, (err, files) => {
       files.forEach((file) => {
         require(file)(self.app);
       });
     });
 
-    glob(appRoot.path + "/app/routes/*.routes.js", {}, (err, files) => {
-      files.forEach((file) => {
-        require(file)(self.app);
-      });
-    });
+    // glob(appRoot.path + "/app/routes/*.routes.js", {}, (err, files) => {
+    //   files.forEach((file) => {
+    //     require(file)(self.app);
+    //   });
+    // });
   }
 
   /**
