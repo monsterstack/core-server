@@ -1,5 +1,5 @@
 'use strict';
-const glob = require('multi-glob');
+const glob = require('multi-glob').glob;
 const Promise = require('promise');
 const config = require('config');
 const stash = require('stash');
