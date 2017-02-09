@@ -13,6 +13,8 @@ const bearerToken = require('express-bearer-token');
 const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
 const RealizationCheckMiddleware = require('discovery-middleware').RealizationCheckMiddleware;
 
+const CircuitBreakerMiddleware = require('../middleware/circuitBreaker').CircuitBreakerMiddleware;
+
 class Server {
   constructor(name, announcement, types, options) {
     this.id = require('node-uuid').v1();
@@ -24,6 +26,10 @@ class Server {
     let discoveryHost = config.discovery.host;
     let discoveryPort = config.discovery.port;
     let makeAnnouncement = false;
+
+    this.circuitBreaker = new CircuitBreakerMiddleware({
+      maxFailureAllowed: 5
+    });
 
     if(options) {
       useRandomWorkerPort = options.useRandomWorkerPort || false;
@@ -123,6 +129,7 @@ class Server {
       // parse an HTML body into a string
       self.app.use(bodyParser.text({ type: 'text/html' }));
       console.log("Intializing Middleware")
+      self.app.use(self.circuitBreaker.inboundMiddleware(self.app));
       self.app.authCheck = new AuthCheckMiddleware(self.app);
       self.app.realizationCheck = new RealizationCheckMiddleware(self.app);
 
