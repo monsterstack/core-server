@@ -236,17 +236,14 @@ class Server {
 
   loadHttpRoutes() {
     console.log("Loading Http Routes");
+    let self = this;
     glob(appRoot.path + "/*/v1/routes/*.routes.js", {}, (err, files) => {
-      files.forEach((file) => {
-        require(file)(this.app);
-      });
+      for(let f in files) {
+        require(files[f]);
+      }
+      // Add Last Middleware
+      self.app.use(self.circuitBreaker.outboundMiddleware(self.app));
     });
-
-    // glob(appRoot.path + "/app/routes/*.routes.js", {}, (err, files) => {
-    //   files.forEach((file) => {
-    //     require(file)(this.app);
-    //   });
-    // });
   }
 
   /**
