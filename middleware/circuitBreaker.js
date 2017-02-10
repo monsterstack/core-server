@@ -4,10 +4,10 @@ class CircuitBreakerMiddleware {
   constructor(options) {
     this.pathCounts = {};
 
-    this.windowInMillis = 100;
+    this.windowInMillis = 5000;
 
     this.maxFailureAllowed = 5;
-    this.resetDelay = 5000;
+    this.resetDelay = 10000;
 
     if(options) {
       this.maxFailureAllowed = options.maxFailureAllowed || 5;

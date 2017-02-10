@@ -188,7 +188,7 @@ class Server {
 
     if(this.makeAnnouncement === true) {
       let self = this;
-      // Dispatch Proxy -- init / announce
+      // Discovery Proxy -- init / announce
       this.getMe().then((me) => {
         console.log(me);
         console.log(`http://${this.discoveryHost}:${this.discoveryPort}`);
