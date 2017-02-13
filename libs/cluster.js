@@ -179,7 +179,7 @@ class Cluster {
             console.log("******************** Error **********")
             console.log(err);
           });
-        }, 2000);
+        }, 5000);
       });
 
       /** Deal with Election of Group Leader **/
