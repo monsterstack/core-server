@@ -170,6 +170,8 @@ class Cluster {
                 console.log(err);
               } else {
                 // Clusters only announce.  Leave query to workers.
+                console.log('Binding to Discovery Service and announcing...');
+                console.log(me);
                 p.bind({ descriptor: me, types: [] });
               }
             });
