@@ -112,6 +112,29 @@ class Cluster {
     process.on('uncaughtException', exitHandler.bind(null, {cleanup:true}));
   }
 
+  announce(config, port) {
+    let self = this;
+    //Dispatch Proxy -- init / announce
+    self.getMe(config, port).then((me) => {
+      console.log(me);
+      let discoveryHost = config.discovery.host;
+      let discoveryPort = config.discovery.port;
+      self.proxy.connect({addr:`http://${discoveryHost}:${discoveryPort}`}, (err, p) => {
+        if(err) {
+          console.log(err);
+        } else {
+          // Clusters only announce.  Leave query to workers.
+          console.log('Binding to Discovery Service and announcing...');
+          console.log(me);
+          p.bind({ descriptor: me, types: [] });
+        }
+      });
+    }).catch((err) => {
+      console.log("******************** Error **********")
+      console.log(err);
+    });
+  }
+
   /**
    * Start Local Cluster of Service nodes.
    * Establish a Cluster Group Name and attempt to establish a leader, amongst
@@ -161,24 +184,7 @@ class Cluster {
       server.listen(myPort, () => {
         setTimeout(() => {
           //Dispatch Proxy -- init / announce
-          self.getMe(config, server.address().port).then((me) => {
-            console.log(me);
-            let discoveryHost = config.discovery.host;
-            let discoveryPort = config.discovery.port;
-            self.proxy.connect({addr:`http://${discoveryHost}:${discoveryPort}`}, (err, p) => {
-              if(err) {
-                console.log(err);
-              } else {
-                // Clusters only announce.  Leave query to workers.
-                console.log('Binding to Discovery Service and announcing...');
-                console.log(me);
-                p.bind({ descriptor: me, types: [] });
-              }
-            });
-          }).catch((err) => {
-            console.log("******************** Error **********")
-            console.log(err);
-          });
+          self.announce(config, server.address().port);
         }, 5000);
       });
 
