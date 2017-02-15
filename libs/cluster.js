@@ -20,12 +20,20 @@ class Cluster {
    * Valid Options:
    * - numWorkers ( integer )
    * - discoveryHost ( string )
+   * - overrides ( string path to override config )
    */
   constructor(name, announcement, options) {
     this.id = ID;
     this.options = options;
     this.clusterName = name;
+
     this.clusterArgs = ['--use', 'http', '--randomWorkerPort', 'true', '--announce', 'false'];
+
+    if(options.overridesPath) {
+      this.clusterArgs.push('--overrides');
+      this.clusterArgs.push(options.overridesPath);
+    }
+
     this.cluster = cluster;
 
     this.numCPUs = require('os').cpus().length;
