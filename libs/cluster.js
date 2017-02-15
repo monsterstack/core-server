@@ -92,7 +92,7 @@ class Cluster {
 
     let p = new Promise((resolve, reject) => {
       let ip = require('ip').address();
-      console.log(`HOST IP FROM env is ${process.env.HOST_IP}`)
+      // console.log(`HOST IP FROM env is ${process.env.HOST_IP}`)
       // if(process.env.HOST_IP)
       //   ip = process.env.HOST_IP;
       descriptor.endpoint = "http://"+ip+":"+myPort;
