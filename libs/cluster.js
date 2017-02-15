@@ -189,6 +189,10 @@ class Cluster {
 
       let myPort = config.port;
 
+      if(process.env.PORT) {
+        myPort = process.env.PORT;
+      }
+
       server.listen(myPort, () => {
         setTimeout(() => {
           //Dispatch Proxy -- init / announce
