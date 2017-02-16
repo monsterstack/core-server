@@ -17,6 +17,7 @@ class SwaggerService {
       if(process.env.HOST_IP) {
         host = process.env.HOST_IP;
       }
+
       let basePath = self.basePath;
       let port = config.port;
       

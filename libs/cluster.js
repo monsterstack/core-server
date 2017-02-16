@@ -135,12 +135,19 @@ class Cluster {
           console.log('Binding to Discovery Service and announcing...');
           console.log(me);
           p.bind({ descriptor: me, types: [] });
+          self.proxy = p;
         }
       });
     }).catch((err) => {
       console.log("******************** Error **********")
       console.log(err);
     });
+  }
+
+  reannounce() {
+    if(this.proxy) {
+      console.log('Reannouncing...');
+    }
   }
 
   /**
@@ -192,6 +199,8 @@ class Cluster {
       if(process.env.PORT) {
         myPort = process.env.PORT;
       }
+
+      self.clusterPort = myPort;
 
       server.listen(myPort, () => {
         setTimeout(() => {
