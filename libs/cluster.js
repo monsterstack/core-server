@@ -216,13 +216,15 @@ class Cluster {
         retry_strategy: self._redisRetryStrategy()
       });
 
-      let redisSub = redis.createClient({
-        host: config.redis.host,
-        port: config.redis.port || 6379,
-        retry_strategy: self._redisRetryStrategy()
-      });
+      
 
       redisClient.on('ready', () => {
+        let redisSub = redis.createClient({
+          host: config.redis.host,
+          port: config.redis.port || 6379,
+          retry_strategy: self._redisRetryStrategy()
+        });
+        
         let leader = new Leader(redisClient, redisSub);
         leader.onStepUp((groupName) => {
           console.log("******************* I am master");
