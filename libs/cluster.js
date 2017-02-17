@@ -216,15 +216,26 @@ class Cluster {
         retry_strategy: self._redisRetryStrategy()
       });
 
-      
+      redisClient.on('error', (err) => {
+        console.log(err);
+      });
 
+      
+      /*
+       * Wait till client is ready before joining
+       * cluster and initializing an election.
+       */
       redisClient.on('ready', () => {
         let redisSub = redis.createClient({
           host: config.redis.host,
           port: config.redis.port || 6379,
           retry_strategy: self._redisRetryStrategy()
         });
-        
+
+        redisSub.on('error', (err) => {
+          console.log(err);
+        });
+
         let leader = new Leader(redisClient, redisSub);
         leader.onStepUp((groupName) => {
           console.log("******************* I am master");
