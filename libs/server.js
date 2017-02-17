@@ -116,7 +116,8 @@ class Server {
       // Clustered Socket IO using Redis -- Move out of lifecycle
       // self.io.adapter(self.ioredis({
       //   host: config.redis.host,
-      //   port: config.redis.port
+      //   port: config.redis.port,
+      //   retry_strategy: self._redisRetryStrategy()
       // }));
 
       // Authorization of Client Connection -- Move out of lifecycle
@@ -265,6 +266,14 @@ class Server {
 
     //catches uncaught exceptions
     process.on('uncaughtException', exitHandler.bind(null, {cleanup:true}));
+  }
+
+  _redisRetryStrategy() {
+    return (options) => {
+      console.log(options);
+      // reconnect after
+      return Math.min(options.attempt * 100, 3000);
+    }
   }
 
 }

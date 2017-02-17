@@ -222,19 +222,22 @@ class Cluster {
         retry_strategy: self._redisRetryStrategy()
       });
 
-      let leader = new Leader(redisClient, redisSub);
-      leader.onStepUp((groupName) => {
-        console.log("******************* I am master");
-        console.log(groupName);
-        self.iAmMaster = true;
-      });
+      redisClient.on('ready', () => {
+        let leader = new Leader(redisClient, redisSub);
+        leader.onStepUp((groupName) => {
+          console.log("******************* I am master");
+          console.log(groupName);
+          self.iAmMaster = true;
+        });
 
-      leader.onStepDown((groupName) => {
-        console.log(groupName);
-        self.iAmMaster = false;
-      });
+        leader.onStepDown((groupName) => {
+          console.log(groupName);
+          self.iAmMaster = false;
+        });
 
-      leader.join(`${this.clusterName}-Cluster`);
+        leader.join(`${this.clusterName}-Cluster`);
+      });
+      
     }
   }
 
