@@ -212,13 +212,16 @@ class Cluster {
       /** Deal with Election of Group Leader **/
       let redisClient = redis.createClient({
         host: config.redis.host,
-        port: config.redis.port || 6379
+        port: config.redis.port || 6379,
+        retryStrategy: self._redisRetryStrategy()
       });
 
       let redisSub = redis.createClient({
         host: config.redis.host,
-        port: config.redis.port || 6379
+        port: config.redis.port || 6379,
+        retryStrategy: self._redisRetryStrategy()
       });
+      
       let leader = new Leader(redisClient, redisSub);
       leader.onStepUp((groupName) => {
         console.log("******************* I am master");
@@ -232,6 +235,14 @@ class Cluster {
       });
 
       leader.join(`${this.clusterName}-Cluster`);
+    }
+  }
+
+
+  _redisRetryStrategy() {
+    return (options) => {
+      // reconnect after
+      return Math.min(options.attempt * 100, 3000);
     }
   }
 }
