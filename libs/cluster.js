@@ -8,6 +8,10 @@ const hash = require( './hash');
 // Service ID
 const ID = require('node-uuid').v1();
 
+/**
+ * Cluster
+ * Responsible for managing Servers as worker processes.
+ */
 class Cluster {
   /**
    * Create Cluster
@@ -120,6 +124,11 @@ class Cluster {
     process.on('uncaughtException', exitHandler.bind(null, {cleanup:true}));
   }
 
+  /**
+   * Announce yourself to the Discovery Service
+   * @param config
+   * @param port
+   */
   announce(config, port) {
     let self = this;
     //Dispatch Proxy -- init / announce
@@ -144,6 +153,9 @@ class Cluster {
     });
   }
 
+  /**
+   * Reannounce
+   */
   reannounce() {
     if(this.proxy) {
       console.log('Reannouncing...');
@@ -220,7 +232,6 @@ class Cluster {
         console.log(err);
       });
 
-      
       /*
        * Wait till client is ready before joining
        * cluster and initializing an election.
@@ -254,7 +265,9 @@ class Cluster {
     }
   }
 
-
+  /**
+   * Redis Retry strategy
+   */
   _redisRetryStrategy() {
     return (options) => {
       console.log(options);
@@ -264,4 +277,5 @@ class Cluster {
   }
 }
 
+// Public
 module.exports.Cluster = Cluster;
