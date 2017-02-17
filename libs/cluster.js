@@ -241,6 +241,7 @@ class Cluster {
 
   _redisRetryStrategy() {
     return (options) => {
+      console.log(options);
       // reconnect after
       return Math.min(options.attempt * 100, 3000);
     }
