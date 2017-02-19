@@ -217,6 +217,7 @@ class Cluster {
       server.listen(myPort, () => {
         setTimeout(() => {
           //Dispatch Proxy -- init / announce
+          console.log('Cluster Announce');
           self.announce(config, server.address().port);
         }, 6000);
       });
