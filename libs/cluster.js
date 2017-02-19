@@ -218,7 +218,7 @@ class Cluster {
         setTimeout(() => {
           //Dispatch Proxy -- init / announce
           self.announce(config, server.address().port);
-        }, 5000);
+        }, 6000);
       });
 
       /** Deal with Election of Group Leader **/
