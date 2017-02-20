@@ -220,19 +220,26 @@ class Server {
     let self = this;
     if(exitHandlerFactory)
       this._bindCleanUp(exitHandlerFactory, modelRepository);
-    // Dispatch Proxy -- init / announce
-    this.getMe().then((me) => {
-      console.log(me);
-      console.log(`http://${this.discoveryHost}:${this.discoveryPort}`);
-      this.proxyLib.connect({addr:`http://${this.discoveryHost}:${this.discoveryPort}`}, (err, p) => {
+    console.log(`http://${this.discoveryHost}:${this.discoveryPort}`);
+    this.proxyLib.connect({addr:`http://${this.discoveryHost}:${this.discoveryPort}`}, (err, p) => {
         p.bind({ types: self.types });
         self.boundProxy = p;
         self.app.proxy = p;
         self.app.dependencies = self.types;
-      });
-    }).catch((err) => {
-      console.log(err);
-    });
+     });
+    // Dispatch Proxy -- init / announce
+    // this.getMe().then((me) => {
+    //   console.log(me);
+    //   console.log(`http://${this.discoveryHost}:${this.discoveryPort}`);
+    //   this.proxyLib.connect({addr:`http://${this.discoveryHost}:${this.discoveryPort}`}, (err, p) => {
+    //     p.bind({ types: self.types });
+    //     self.boundProxy = p;
+    //     self.app.proxy = p;
+    //     self.app.dependencies = self.types;
+    //   });
+    // }).catch((err) => {
+    //   console.log(err);
+    // });
   }
 
   loadHttpRoutes() {
