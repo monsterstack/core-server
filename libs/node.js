@@ -20,7 +20,7 @@ class Node extends EventEmitter {
     /**
      * Redis Retry strategy
      */
-    _redisRetryStrategy() {
+    redisRetryStrategy() {
         return (options) => {
             console.log(options);
             // reconnect after

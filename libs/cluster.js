@@ -231,7 +231,7 @@ class Cluster extends Node {
       let redisClient = redis.createClient({
         host: config.redis.host,
         port: config.redis.port || 6379,
-        retry_strategy: self._redisRetryStrategy()
+        retry_strategy: self.redisRetryStrategy()
       });
 
       redisClient.on('error', (err) => {
@@ -246,7 +246,7 @@ class Cluster extends Node {
         let redisSub = redis.createClient({
           host: config.redis.host,
           port: config.redis.port || 6379,
-          retry_strategy: self._redisRetryStrategy()
+          retry_strategy: self.redisRetryStrategy()
         });
 
         redisSub.on('error', (err) => {

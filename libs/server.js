@@ -118,7 +118,7 @@ class Server extends Node {
       // self.io.adapter(self.ioredis({
       //   host: config.redis.host,
       //   port: config.redis.port,
-      //   retry_strategy: self._redisRetryStrategy()
+      //   retry_strategy: self.redisRetryStrategy()
       // }));
 
       // Authorization of Client Connection -- Move out of lifecycle
@@ -201,7 +201,7 @@ class Server extends Node {
           self.app.proxy = p;
           self.app.dependencies = self.types;
 
-          self._emitProxyReady(p);
+          self.emitProxyReady(p);
         });
       }).catch((err) => {
         console.log(err);
@@ -230,6 +230,8 @@ class Server extends Node {
         self.boundProxy = p;
         self.app.proxy = p;
         self.app.dependencies = self.types;
+
+        self.emitProxyReady(p);
      });
     // Dispatch Proxy -- init / announce
     // this.getMe().then((me) => {
