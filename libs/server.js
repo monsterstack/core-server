@@ -19,7 +19,7 @@ const CircuitBreakerMiddleware = require('../middleware/circuitBreaker').Circuit
 
 class Server extends Node {
   constructor(name, announcement, types, options) {
-    
+    super();    
     this.id = require('node-uuid').v1();
     this.name = name;
     this.announcement = announcement;
