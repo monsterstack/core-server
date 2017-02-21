@@ -48,7 +48,7 @@ class HealthService {
 
         resolve({
           loadAvg: finalLoadAvg,
-          cpuPercentAvg: percentageCPU
+          cpuPercentUsage: percentageCPU
         });
       }, 100);
     });

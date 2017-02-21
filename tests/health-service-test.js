@@ -30,8 +30,8 @@ describe('health-service', (done) => {
     it('Health calculation has cpuAvg', (done) => {
         healthService.getHealth().then((health) => {
             console.log(health);
-            if(health.cpuPercentAvg) {
-                if(typeof health.cpuPercentAvg === 'number')
+            if(health.cpuPercentUsage) {
+                if(typeof health.cpuPercentUsage === 'number')
                     done();
                 else
                     done(new Error('Invalid cpuAvg type, expecting `number`'));
