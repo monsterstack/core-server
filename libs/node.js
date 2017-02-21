@@ -13,7 +13,7 @@ class Node extends EventEmitter {
         });
     }
 
-    _emitProxyReady(proxy) {
+    emitProxyReady(proxy) {
         this.emit('proxy.ready', proxy);
     }
 
