@@ -9,6 +9,7 @@ const path = require('path');
 const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
+const once = require('once');
 const EventEmitter = require('events');
 
 const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
@@ -48,6 +49,13 @@ class Server extends EventEmitter {
 
     this.proxyLib = require('discovery-proxy');
     this.boundProxy = null;
+  }
+
+  onProxyReady(callback) {
+    let cb = once(callback);
+    this.on('proxy.ready', (proxy) => {
+      cb(proxy);
+    });
   }
 
   getIo() {
@@ -275,6 +283,10 @@ class Server extends EventEmitter {
 
     //catches uncaught exceptions
     process.on('uncaughtException', exitHandler.bind(null, {cleanup:true}));
+  }
+
+  _emitProxyReady(proxy) {
+    this.emit('proxy.ready', proxy);
   }
 
   _redisRetryStrategy() {
