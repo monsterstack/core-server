@@ -31,6 +31,7 @@ class Cluster extends Node {
    * - overrides ( string path to override config )
    */
   constructor(name, announcement, options) {
+    super();
     this.id = ID;
     this.options = options;
     this.clusterName = name;
