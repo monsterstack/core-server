@@ -29,3 +29,5 @@ class Node extends EventEmitter {
         }
     }
 }
+
+module.exports.Node = Node;

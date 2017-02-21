@@ -6,7 +6,7 @@ const net = require('net');
 const Leader = require('./leader');
 const hash = require( './hash');
 
-const Node = require('./node');
+const Node = require('./node').Node;
 
 // Service ID
 const ID = require('node-uuid').v1();

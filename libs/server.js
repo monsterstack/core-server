@@ -10,7 +10,7 @@ const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
 const once = require('once');
-const Node = require('./node');
+const Node = require('./node').Node;
 
 const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
 const RealizationCheckMiddleware = require('discovery-middleware').RealizationCheckMiddleware;
