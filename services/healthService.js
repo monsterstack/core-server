@@ -1,8 +1,14 @@
 'use strict';
 const Promise = require('promise');
 
+/**
+ * Health Service
+ */
 class HealthService {
 
+  /**
+   * Create a Health Service
+   */
   constructor() {
     this.os = require('os');
   }
@@ -14,6 +20,10 @@ class HealthService {
     return {idle: total.totalIdle/cpus.length, total: total.totalTick/cpus.length};
   }
 
+  /**
+   * Compute Health
+   * @returns {Promise Chain}
+   */
   getHealth() {
     let self = this;
     let p = new Promise((resolve, reject) => {
@@ -41,6 +51,9 @@ class HealthService {
     return p;
   }
 
+  /**
+   * Calculate Percentage CPU
+   */
   _calculatePercentageCPU(firstMeasure, secondMeasure) {
     let idleDiff = secondMeasure.idle - firstMeasure.idle;
     let totalDiff = secondMeasure.total - firstMeasure.total;
@@ -49,6 +62,9 @@ class HealthService {
     return percentageCPU;
   }
 
+  /**
+   * Count Total Load
+   */
   _totalLoad(loadArray) {
     let total = 0;
     loadArray.forEach((load) => {
@@ -58,6 +74,9 @@ class HealthService {
     return total;
   }
 
+  /**
+   * Count Total CPU Measures
+   */
   _totalCpu(cpus) {
     let totalTick = 0;
     let totalIdle = 0;
@@ -70,6 +89,7 @@ class HealthService {
       totalIdle += cpu.times.idle;
     });
 
+    // CPU Count
     return { totalTick: totalTick, totalIdl: totalIdle};
   }
 }
