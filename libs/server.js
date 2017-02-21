@@ -160,7 +160,7 @@ class Server extends EventEmitter {
         portNum = 0;
       }
 
-      console.log(`Starting ${self.name} on ${config.port}`);
+      console.log(`Starting ${self.name} on ${portNum}`);
       self.http.listen(portNum, () => {
         console.log(`listening on *:${portNum}`);
         resolve();
