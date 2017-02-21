@@ -8,9 +8,8 @@ class Node extends EventEmitter {
     }
 
     onProxyReady(callback) {
-        let cb = once(callback);
-        this.on('proxy.ready', (proxy) => {
-            cb(proxy);
+        this.once('proxy.ready', (proxy) => {
+            callback(proxy);
         });
     }
 
