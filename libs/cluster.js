@@ -5,6 +5,9 @@ const cluster = require('cluster');
 const net = require('net');
 const Leader = require('./leader');
 const hash = require( './hash');
+
+const Node = require('./node');
+
 // Service ID
 const ID = require('node-uuid').v1();
 
@@ -12,7 +15,9 @@ const ID = require('node-uuid').v1();
  * Cluster
  * Responsible for managing Servers as worker processes.
  */
-class Cluster {
+class Cluster extends Node {
+  super();
+
   /**
    * Create Cluster
    * @param name  Cluster Group Name
@@ -266,16 +271,20 @@ class Cluster {
     }
   }
 
-  /**
-   * Redis Retry strategy
-   */
-  _redisRetryStrategy() {
-    return (options) => {
-      console.log(options);
-      // reconnect after
-      return Math.min(options.attempt * 100, 3000);
-    }
-  }
+  // _emitProxyReady(proxy) {
+  //   this.emit('proxy.ready', proxy);
+  // }
+
+  // /**
+  //  * Redis Retry strategy
+  //  */
+  // _redisRetryStrategy() {
+  //   return (options) => {
+  //     console.log(options);
+  //     // reconnect after
+  //     return Math.min(options.attempt * 100, 3000);
+  //   }
+  // }
 }
 
 // Public

@@ -10,14 +10,14 @@ const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
 const once = require('once');
-const EventEmitter = require('events');
+const Node = require('./node');
 
 const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
 const RealizationCheckMiddleware = require('discovery-middleware').RealizationCheckMiddleware;
 
 const CircuitBreakerMiddleware = require('../middleware/circuitBreaker').CircuitBreakerMiddleware;
 
-class Server extends EventEmitter {
+class Server extends Node {
   constructor(name, announcement, types, options) {
     super();
     this.id = require('node-uuid').v1();
@@ -51,12 +51,12 @@ class Server extends EventEmitter {
     this.boundProxy = null;
   }
 
-  onProxyReady(callback) {
-    let cb = once(callback);
-    this.on('proxy.ready', (proxy) => {
-      cb(proxy);
-    });
-  }
+  // onProxyReady(callback) {
+  //   let cb = once(callback);
+  //   this.on('proxy.ready', (proxy) => {
+  //     cb(proxy);
+  //   });
+  // }
 
   getIo() {
     return this.io;
@@ -287,17 +287,17 @@ class Server extends EventEmitter {
     process.on('uncaughtException', exitHandler.bind(null, {cleanup:true}));
   }
 
-  _emitProxyReady(proxy) {
-    this.emit('proxy.ready', proxy);
-  }
+  // _emitProxyReady(proxy) {
+  //   this.emit('proxy.ready', proxy);
+  // }
 
-  _redisRetryStrategy() {
-    return (options) => {
-      console.log(options);
-      // reconnect after
-      return Math.min(options.attempt * 100, 3000);
-    }
-  }
+  // _redisRetryStrategy() {
+  //   return (options) => {
+  //     console.log(options);
+  //     // reconnect after
+  //     return Math.min(options.attempt * 100, 3000);
+  //   }
+  // }
 
 }
 
