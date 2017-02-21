@@ -16,7 +16,7 @@ const ID = require('node-uuid').v1();
  * Responsible for managing Servers as worker processes.
  */
 class Cluster extends Node {
-  super();
+  super()
 
   /**
    * Create Cluster
