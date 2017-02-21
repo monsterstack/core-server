@@ -9,14 +9,16 @@ const path = require('path');
 const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
+const EventEmitter = require('events');
 
 const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
 const RealizationCheckMiddleware = require('discovery-middleware').RealizationCheckMiddleware;
 
 const CircuitBreakerMiddleware = require('../middleware/circuitBreaker').CircuitBreakerMiddleware;
 
-class Server {
+class Server extends EventEmitter {
   constructor(name, announcement, types, options) {
+    super();
     this.id = require('node-uuid').v1();
     this.name = name;
     this.announcement = announcement;
