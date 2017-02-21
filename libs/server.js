@@ -102,7 +102,6 @@ class Server extends EventEmitter {
   init() {
     let self = this;
     let p = new Promise((resolve, reject) => {
-      console.log(`Starting ${self.name} on ${config.port}`);
       self.app = require('express')();
       console.log('Assign express');
       self.http = require('http').Server(self.app);
@@ -161,6 +160,7 @@ class Server extends EventEmitter {
         portNum = 0;
       }
 
+      console.log(`Starting ${self.name} on ${config.port}`);
       self.http.listen(portNum, () => {
         console.log(`listening on *:${portNum}`);
         resolve();
@@ -208,6 +208,8 @@ class Server extends EventEmitter {
           self.boundProxy = p;
           self.app.proxy = p;
           self.app.dependencies = self.types;
+
+          self._emitProxyReady(p);
         });
       }).catch((err) => {
         console.log(err);
