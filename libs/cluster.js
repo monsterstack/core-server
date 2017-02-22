@@ -198,7 +198,7 @@ class Cluster extends Node {
 
       self.clusterPort = myPort;
 
-      server.listen(myPort, () => {
+      this.server.listen(myPort, () => {
         setTimeout(() => {
           //Dispatch Proxy -- init / announce
           console.log('Cluster Announce');
