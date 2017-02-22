@@ -176,11 +176,6 @@ class Cluster extends Node {
   reannounce(config) {
     if(this.proxy) {
       console.log('Reannouncing...');
-      this.getMe(config, this.server.address().port).then((me) => {
-        this.proxy.client.sendInitReq(me, null);
-      }).catch((err) => {
-        console.log(err);
-      });
     }
   }
 
