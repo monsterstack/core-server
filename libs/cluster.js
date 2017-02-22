@@ -265,7 +265,11 @@ class Cluster extends Node {
           ipIndex = hash((c.remoteAddress || '').split(/\./g), seed);
       // Pass connection to worker
       worker = self.workers[ipIndex%self.workers.length];
-      worker.send('sticky-session:connection', c);
+      try {
+        worker.send('sticky-session:connection', c);
+      } catch(err) {
+        console.log(err);
+      }
     });
     return server;
   }
