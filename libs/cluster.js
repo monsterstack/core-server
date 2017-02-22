@@ -77,6 +77,9 @@ class Cluster extends Node {
    * Get Me
    * Generate ServiceDescriptor from announcement data and config.
    * Also, supplement with endpoint details using known ip address and configured port.
+   * 
+   * @TODO:  What is the deal with the config parameter..!?  
+   *          Let's look into removing this.
    * @param config Configuration
    */
   getMe(config, portOverride) {
@@ -131,6 +134,10 @@ class Cluster extends Node {
 
   /**
    * Announce yourself to the Discovery Service
+   * 
+   * @TODO:  What is the deal with the config parameter..!?  
+   *          Let's look into removing this.
+   * 
    * @param config
    * @param port
    */
@@ -161,6 +168,10 @@ class Cluster extends Node {
 
   /**
    * Reannounce
+   * 
+   * @TODO:  What is the deal with the config parameter..!?  
+   *          Let's look into removing this.
+   * @param config
    */
   reannounce(config) {
     if(this.proxy) {
