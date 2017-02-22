@@ -179,38 +179,8 @@ class Cluster extends Node {
     if (self.cluster.isMaster) {
 
       // Fork workers. One per CPU for maximum effectiveness
-      // for (let i = 0; i < self.numCPUs; i++) {
-      //     !function spawn(i) {
-      //         self.workers[i] = self.cluster.fork();
-
-      //         self.workers[i].on('exit', function() {
-      //             console.error('sticky-session: worker died');
-      //             setTimeout(() => {
-      //               spawn(i);
-      //             }, 2000);
-      //         });
-
-      //     }(i);
-      // }
       self._spinUpWorkers();
       self._listenToWorkers();
-      // self.cluster.on('listening', (worker, address) => {
-      //     console.log('A worker is now connected to ' + address.address + ':' + address.port);
-      // });
-
-      // self.cluster.on('online', (worker) => {
-      //     console.log("Worker is online");
-      // });
-
-      // let server = net.createServer({ pauseOnConnect: true }, (c) => {
-      //     let seed = ~~(Math.random() * 1e9);
-      //     // Get int31 hash of ip
-      //     let worker,
-      //         ipIndex = hash((c.remoteAddress || '').split(/\./g), seed);
-      //     // Pass connection to worker
-      //     worker = self.workers[ipIndex%self.workers.length];
-      //     worker.send('sticky-session:connection', c);
-      // });
 
       let server = self._buildServer();
 
@@ -230,33 +200,13 @@ class Cluster extends Node {
         }, 6000);
       });
 
-      /** Deal with Election of Group Leader **/
-      // let redisClient = redis.createClient({
-      //   host: config.redis.host,
-      //   port: config.redis.port || 6379,
-      //   retry_strategy: self.redisRetryStrategy()
-      // });
-
       let redisClient = self._createRedisClient();
-
-      // redisClient.on('error', (err) => {
-      //   console.log(err);
-      // });
 
       /*
        * Wait till client is ready before joining
        * cluster and initializing an election.
        */
       redisClient.on('ready', () => {
-        // let redisSub = redis.createClient({
-        //   host: config.redis.host,
-        //   port: config.redis.port || 6379,
-        //   retry_strategy: self.redisRetryStrategy()
-        // });
-
-        // redisSub.on('error', (err) => {
-        //   console.log(err);
-        // });
         let redisSub = self._createRedisClient();
 
         let leader = new Leader(redisClient, redisSub);

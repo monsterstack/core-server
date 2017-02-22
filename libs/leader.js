@@ -11,9 +11,14 @@ class Leader {
     this.redisCli = redisCli;
     this.redisSub = redisSub;
     this.options = options;
-    if(this.redisCli && this.redisSub)
-      this.me = new Bronto({client: this.redisCli, subscriber: this.redisSub});
-    else {
+    if(this.redisCli && this.redisSub) {
+      let brontoSettings = {
+        client: this.redisCli, 
+        subscriber: this.redisSub
+      };
+
+      this.me = new Bronto(brontoSettings);
+    } else {
       throw new Error("Missing Redis Client");
     }
   }
