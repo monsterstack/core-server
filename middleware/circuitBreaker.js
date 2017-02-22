@@ -1,5 +1,5 @@
 'use strict';
-const HttpStatue = require('http-status');
+const HttpStatus = require('http-status');
 
 class CircuitBreakerMiddleware {
   constructor(options) {
