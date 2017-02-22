@@ -150,6 +150,7 @@ class Cluster extends Node {
           console.log(me);
           p.bind({ descriptor: me, types: [] });
           self.proxy = p;
+          self.emitProxyReady(p);
         }
       });
     }).catch((err) => {
