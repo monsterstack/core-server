@@ -162,10 +162,10 @@ class Cluster extends Node {
   /**
    * Reannounce
    */
-  reannounce() {
+  reannounce(config) {
     if(this.proxy) {
       console.log('Reannouncing...');
-      this.getMe(config, port).then((me) => {
+      this.getMe(config, this.server.address().port).then((me) => {
         this.proxy.client.sendInitReq(me, []);
       }).catch((err) => {
         console.log(err);
@@ -188,7 +188,7 @@ class Cluster extends Node {
       self._spinUpWorkers();
       self._listenToWorkers();
 
-      let server = self._buildServer();
+      this.server = self._buildServer();
 
       let myPort = config.port;
 
@@ -202,7 +202,7 @@ class Cluster extends Node {
         setTimeout(() => {
           //Dispatch Proxy -- init / announce
           console.log('Cluster Announce');
-          self.announce(config, server.address().port);
+          self.announce(config, this.server.address().port);
         }, 6000);
       });
 
