@@ -1,4 +1,5 @@
 'use strict';
+const HttpStatue = require('http-status');
 
 class CircuitBreakerMiddleware {
   constructor(options) {
@@ -45,7 +46,8 @@ class CircuitBreakerMiddleware {
     return (req, res, next) => {
       let status = res.statusCode;
       if(status) {
-        if(status >= 500 && status != 503) {
+        if(status >= HttpStatus.INTERNAL_SERVER_ERROR 
+          && status != HttpStatus.SERVICE_UNAVAILABLE) {
           self.pathCounts[path] = self.pathCounts[path] + 1;
 
           if(self.pathCounts[path] >= self.maxFailureAllowed) {
