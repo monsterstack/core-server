@@ -3,12 +3,12 @@ const appRoot = require('app-root-path');
 const ip = require('ip');
 const Promise = require('promise');
 const config = require('config');
+
 const swagger = require(appRoot + '/api/swagger/swagger.json');
 
 class SwaggerService {
   constructor(apiBasePath, swaggerOverride) {
     this.basePath = apiBasePath;
-    this.swagger = swagger;
   }
 
   getSwagger() {
@@ -19,10 +19,11 @@ class SwaggerService {
         host = process.env.HOST_IP;
       }
 
-      self.swagger.host = `${host}:${config.port}`;
-      self.swagger.basePath = self.basePath;
-      self.swagger.schemes = ['http'];
-      resolve(self.swagger);
+      swagger.host = `${host}:${config.port}`;
+      swagger.basePath = self.basePath;
+      swagger.schemes = ['http'];
+
+      resolve(swagger);
     });
 
     return p;
