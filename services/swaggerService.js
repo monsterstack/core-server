@@ -3,13 +3,14 @@ const appRoot = require('app-root-path');
 const ip = require('ip');
 const Promise = require('promise');
 const config = require('config');
+const swagger = require(appRoot + '/api/swagger/swagger.json');
 
 class SwaggerService {
   constructor(apiBasePath, swaggerOverride) {
     this.basePath = apiBasePath;
 
     if(swaggerOverride === null) {
-      this.swagger = require(appRoot + '/api/swagger/swagger.json');
+      this.swagger = swagger;
     } else {
       this.swagger = swaggerOverride;
     }
@@ -23,12 +24,7 @@ class SwaggerService {
         host = process.env.HOST_IP;
       }
 
-      if(self.swagger) {     
-        self.swagger = self._modifySwagger(self.swagger, host, self.basePath);
-        resolve(self.swagger);
-      } else {
-        resolve(null);
-      }
+      resolve(self.swagger);
     });
 
     return p;
