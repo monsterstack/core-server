@@ -77,9 +77,6 @@ class Cluster extends Node {
    * Get Me
    * Generate ServiceDescriptor from announcement data and config.
    * Also, supplement with endpoint details using known ip address and configured port.
-   * 
-   * @TODO:  What is the deal with the config parameter..!?  
-   *          Let's look into removing this.
    * @param config Configuration
    */
   getMe(config, portOverride) {
@@ -134,10 +131,6 @@ class Cluster extends Node {
 
   /**
    * Announce yourself to the Discovery Service
-   * 
-   * @TODO:  What is the deal with the config parameter..!?  
-   *          Let's look into removing this.
-   * 
    * @param config
    * @param port
    */
@@ -157,7 +150,6 @@ class Cluster extends Node {
           console.log(me);
           p.bind({ descriptor: me, types: [] });
           self.proxy = p;
-          self.emitProxyReady(p);
         }
       });
     }).catch((err) => {
@@ -168,12 +160,8 @@ class Cluster extends Node {
 
   /**
    * Reannounce
-   * 
-   * @TODO:  What is the deal with the config parameter..!?  
-   *          Let's look into removing this.
-   * @param config
    */
-  reannounce(config) {
+  reannounce() {
     if(this.proxy) {
       console.log('Reannouncing...');
     }
@@ -191,10 +179,37 @@ class Cluster extends Node {
     if (self.cluster.isMaster) {
 
       // Fork workers. One per CPU for maximum effectiveness
-      self._spinUpWorkers();
-      self._listenToWorkers();
+      for (let i = 0; i < self.numCPUs; i++) {
+          !function spawn(i) {
+              self.workers[i] = self.cluster.fork();
 
-      this.server = self._buildServer();
+              self.workers[i].on('exit', function() {
+                  console.error('sticky-session: worker died');
+                  setTimeout(() => {
+                    spawn(i);
+                  }, 2000);
+              });
+
+          }(i);
+      }
+
+      self.cluster.on('listening', (worker, address) => {
+          console.log('A worker is now connected to ' + address.address + ':' + address.port);
+      });
+
+      self.cluster.on('online', (worker) => {
+          console.log("Worker is online");
+      });
+
+      let server = net.createServer({ pauseOnConnect: true }, (c) => {
+          let seed = ~~(Math.random() * 1e9);
+          // Get int31 hash of ip
+          let worker,
+              ipIndex = hash((c.remoteAddress || '').split(/\./g), seed);
+          // Pass connection to worker
+          worker = self.workers[ipIndex%self.workers.length];
+          worker.send('sticky-session:connection', c);
+      });
 
       let myPort = config.port;
 
@@ -204,22 +219,39 @@ class Cluster extends Node {
 
       self.clusterPort = myPort;
 
-      this.server.listen(myPort, () => {
+      server.listen(myPort, () => {
         setTimeout(() => {
           //Dispatch Proxy -- init / announce
           console.log('Cluster Announce');
-          self.announce(config, this.server.address().port);
+          self.announce(config, server.address().port);
         }, 6000);
       });
 
-      let redisClient = self._createRedisClient();
+      /** Deal with Election of Group Leader **/
+      let redisClient = redis.createClient({
+        host: config.redis.host,
+        port: config.redis.port || 6379,
+        retry_strategy: self.redisRetryStrategy()
+      });
+
+      redisClient.on('error', (err) => {
+        console.log(err);
+      });
 
       /*
        * Wait till client is ready before joining
        * cluster and initializing an election.
        */
       redisClient.on('ready', () => {
-        let redisSub = self._createRedisClient();
+        let redisSub = redis.createClient({
+          host: config.redis.host,
+          port: config.redis.port || 6379,
+          retry_strategy: self.redisRetryStrategy()
+        });
+
+        redisSub.on('error', (err) => {
+          console.log(err);
+        });
 
         let leader = new Leader(redisClient, redisSub);
         leader.onStepUp((groupName) => {
@@ -238,70 +270,7 @@ class Cluster extends Node {
       
     }
   }
-
-  _spinUpWorkers() {
-    let self = this;
-    // Fork workers. One per CPU for maximum effectiveness
-    for (let i = 0; i < self.numCPUs; i++) {
-        !function spawn(i) {
-            self.workers[i] = self.cluster.fork();
-
-            self.workers[i].on('exit', function() {
-                console.error('sticky-session: worker died');
-                setTimeout(() => {
-                  spawn(i);
-                }, 2000);
-            });
-        }(i);
-    }
-  }
-
-  _buildServer() {
-    let self = this;
-    let server = net.createServer({ pauseOnConnect: true }, (c) => {
-      let seed = ~~(Math.random() * 1e9);
-      // Get int31 hash of ip
-      let worker,
-          ipIndex = hash((c.remoteAddress || '').split(/\./g), seed);
-      // Pass connection to worker
-      worker = self.workers[ipIndex%self.workers.length];
-      try {
-        worker.send('sticky-session:connection', c);
-      } catch(err) {
-        console.log(err);
-      }
-    });
-    return server;
-  }
-
-  _listenToWorkers() {
-    let self = this;
-    self.cluster.on('listening', (worker, address) => {
-          console.log('A worker is now connected to ' + address.address + ':' + address.port);
-    });
-
-    self.cluster.on('online', (worker) => {
-          console.log("Worker is online");
-    });
-  }
-
-  _createRedisClient() {
-    let self = this;
-    let redisClient = redis.createClient({
-        host: config.redis.host,
-        port: config.redis.port || 6379,
-        retry_strategy: self.redisRetryStrategy()
-    });
-
-    redisClient.on('error', (err) => {
-        console.log(err);
-    });
-
-    return redisClient;
-  }
 }
-
-
 
 // Public
 module.exports.Cluster = Cluster;
