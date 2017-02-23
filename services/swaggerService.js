@@ -31,7 +31,7 @@ class SwaggerService {
     let p = new Promise((resolve, reject) => {
       let host = ip.address();
 
-      if(this.options.host) {
+      if(this.options && this.options.hasOwnProperty('host')) {
         host = this.options.host;
       } else if(process.env.HOST_IP) {
         host = process.env.HOST_IP;
@@ -39,7 +39,7 @@ class SwaggerService {
 
       let swagger = _.clone(self.baseSwagger);
       let port = config.port;
-      if(options.port) {
+      if(this.options && this.options.hasOwnProperty('port')) {
         port = options.port;
       }
       swagger.host = `${host}:${port}`;
