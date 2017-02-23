@@ -155,7 +155,7 @@ class Server extends Node {
       console.log(`Starting ${self.name} on ${portNum}`);
       self.http.listen(portNum, () => {
         console.log(`listening on *:${portNum}`);
-        self.app.listinginPort = self.http.address().port;
+        self.app.listeningPort = self.http.address().port;
         resolve();
       });
 
