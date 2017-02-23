@@ -6,7 +6,7 @@ const config = require('config');
 const _ = require('lodash');
 
 class SwaggerService {
-  constructor(apiBasePath, baseSwagger) {
+  constructor(apiBasePath, baseSwagger, options) {
     this.basePath = apiBasePath;
     this.baseSwagger = baseSwagger;
   }
@@ -20,7 +20,11 @@ class SwaggerService {
       }
 
       let swagger = _.clone(self.baseSwagger);
-      swagger.host = `${host}:${config.port}`;
+      let port = config.port;
+      if(options.port) {
+        port = options.port;
+      }
+      swagger.host = `${host}:${port}`;
       swagger.basePath = self.basePath;
       swagger.schemes = ['http'];
 
