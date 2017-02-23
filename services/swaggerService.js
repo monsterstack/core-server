@@ -5,17 +5,35 @@ const Promise = require('promise');
 const config = require('config');
 const _ = require('lodash');
 
+/**
+ * SwaggerService
+ * @param apiBasePath
+ * @param baseSwagger
+ * @param options
+ * 
+ * options
+ * host - ip of hosting server
+ * port - port of hosting server
+ * 
+ * Above options are optional and default to config settings.
+ * if ENV HOST_IP exists options are overriding by environment var.
+ */
 class SwaggerService {
   constructor(apiBasePath, baseSwagger, options) {
     this.basePath = apiBasePath;
     this.baseSwagger = baseSwagger;
+
+    this.options = options;
   }
 
   getSwagger() {
     let self = this;
     let p = new Promise((resolve, reject) => {
       let host = ip.address();
-      if(process.env.HOST_IP) {
+
+      if(this.options.host) {
+        host = this.options.host;
+      } else if(process.env.HOST_IP) {
         host = process.env.HOST_IP;
       }
 
