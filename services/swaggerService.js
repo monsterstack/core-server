@@ -40,7 +40,7 @@ class SwaggerService {
       let swagger = _.clone(self.baseSwagger);
       let port = config.port;
       if(this.options && this.options.hasOwnProperty('port')) {
-        port = options.port;
+        port = this.options.port;
       }
       swagger.host = `${host}:${port}`;
       swagger.basePath = self.basePath;
