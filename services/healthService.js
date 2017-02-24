@@ -90,7 +90,7 @@ class HealthService {
     });
 
     // CPU Count
-    return { totalTick: totalTick, totalIdl: totalIdle};
+    return { totalTick: totalTick, totalIdle: totalIdle};
   }
 }
 
