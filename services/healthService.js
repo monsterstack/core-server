@@ -41,7 +41,7 @@ class HealthService {
 
         resolve({
           loadAvg: finalLoadAvg,
-          cpuPercentUsage: percentageCPU
+          cpuPercentUsage: 100 - percentageCPU
         });
       }
 
