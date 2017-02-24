@@ -58,7 +58,7 @@ class HealthService {
     let idleDiff = secondMeasure.idle - firstMeasure.idle;
     let totalDiff = secondMeasure.total - firstMeasure.total;
 
-    let percentageCPU = 100 - (100 * (idleDiff/totalDiff));
+    let percentageCPU = 100 - ~~(100 * (idleDiff/totalDiff));
     return percentageCPU;
   }
 
