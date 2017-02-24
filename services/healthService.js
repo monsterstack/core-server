@@ -45,7 +45,7 @@ class HealthService {
         });
       }
 
-      setTimeout(calculation, 100);
+      setTimeout(calculation, 500);
     });
 
     return p;
