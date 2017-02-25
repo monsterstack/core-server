@@ -84,6 +84,8 @@ class Server extends Node {
       let ip = require('ip').address();
       if(process.env.HOST_IP)
         ip = process.env.HOST_IP;
+      else if(process.env.CONTAINER_ADDR) 
+        ip = process.env.CONTAINER_ADDR;
       descriptor.endpoint = "http://"+ip+":"+config.port
       resolve(descriptor);
     });

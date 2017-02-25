@@ -35,6 +35,8 @@ class SwaggerService {
         host = this.options.host;
       } else if(process.env.HOST_IP) {
         host = process.env.HOST_IP;
+      } else if(process.env.CONTAINER_ADDR) {
+        host = process.env.CONTAINER_ADDR;
       }
 
       let swagger = _.clone(self.baseSwagger);
