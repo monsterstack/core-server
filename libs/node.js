@@ -1,10 +1,25 @@
 'use strict';
+const ip = require('ip');
+const Promise = require('promise');
 const EventEmitter = require('events');
 
 class Node extends EventEmitter {
 
     constructor() {
         super();
+    }
+
+    getIp() {
+        let p = new Promise((resolve, reject) => {
+            let ip = require('ip').address();
+            console.log(`HOST IP FROM env is ${process.env.HOST_IP}`)
+            if(process.env.HOST_IP)
+                ip = process.env.HOST_IP;
+            else if(process.env.CONTAINER_ADDR) 
+                ip = process.env.CONTAINER_ADDR;
+            resolve(ip);
+        });
+        return p;
     }
 
     onProxyReady(callback) {

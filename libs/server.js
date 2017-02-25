@@ -80,17 +80,11 @@ class Server extends Node {
       version: this.announcement.version
     };
 
-    let p = new Promise((resolve, reject) => {
-      let ip = require('ip').address();
-      if(process.env.HOST_IP)
-        ip = process.env.HOST_IP;
-      else if(process.env.CONTAINER_ADDR) 
-        ip = process.env.CONTAINER_ADDR;
+    let p = this.getIp().then((ip) => {
       descriptor.endpoint = "http://"+ip+":"+config.port
-      resolve(descriptor);
+      return descriptor;
     });
     return p;
-
   }
 
   init() {
@@ -136,6 +130,13 @@ class Server extends Node {
       self.app.use(self.circuitBreaker.inboundMiddleware(self.app));
       self.app.authCheck = new AuthCheckMiddleware(self.app);
       self.app.realizationCheck = new RealizationCheckMiddleware(self.app);
+
+      self.getIp().then((ip) => {
+        if(ip)
+          self.app.listeningIp = ip;
+      }).catch((err) => {
+        console.log('Failed to get ip');
+      });
 
       console.log('Resolve');
 

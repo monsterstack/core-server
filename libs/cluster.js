@@ -99,16 +99,11 @@ class Cluster extends Node {
       myPort = portOverride;
     }
 
-    let p = new Promise((resolve, reject) => {
-      let ip = require('ip').address();
-      console.log(`HOST IP FROM env is ${process.env.HOST_IP}`)
-      if(process.env.HOST_IP)
-        ip = process.env.HOST_IP;
-      else if(process.env.CONTAINER_ADDR) 
-        ip = process.env.CONTAINER_ADDR;
+    let p = this.getIp().then((ip) => {
       descriptor.endpoint = "http://"+ip+":"+myPort;
-      resolve(descriptor);
+      return descriptor;
     });
+
     return p;
   }
 
