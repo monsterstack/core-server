@@ -26,18 +26,18 @@ class SwaggerService {
     this.options = options;
   }
 
-  getSwagger() {
+  getSwagger(app) {
     let self = this;
     let p = new Promise((resolve, reject) => {
-      let host = ip.address();
+      let host = app.listeningIp;
 
-      if(this.options && this.options.hasOwnProperty('host')) {
-        host = this.options.host;
-      } else if(process.env.HOST_IP) {
-        host = process.env.HOST_IP;
-      } else if(process.env.CONTAINER_ADDR) {
-        host = process.env.CONTAINER_ADDR;
-      }
+      // if(this.options && this.options.hasOwnProperty('host')) {
+      //   host = this.options.host;
+      // } else if(process.env.HOST_IP) {
+      //   host = process.env.HOST_IP;
+      // } else if(process.env.CONTAINER_ADDR) {
+      //   host = process.env.CONTAINER_ADDR;
+      // }
 
       let swagger = _.clone(self.baseSwagger);
       let port = config.port;
