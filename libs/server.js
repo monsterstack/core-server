@@ -110,14 +110,17 @@ class Server extends Node {
       self.app.use(bodyParser.json({ type: 'application/json' }));
       self.app.use(bearerToken());
 
-      // Clustered Socket IO using Redis -- Move out of lifecycle
-      // self.io.adapter(self.ioredis({
-      //   host: config.redis.host,
-      //   port: config.redis.port,
-      //   retry_strategy: self.redisRetryStrategy()
-      // }));
+      // Clustered Socket IO using Redis
+      // This is used to support multiple Servers in a Cluster.
+      // Support broadcasting to all client connections, not just the
+      // ones connected to this instance.
+      self.io.adapter(self.ioredis({
+        host: config.redis.host,
+        port: config.redis.port,
+        retry_strategy: self.redisRetryStrategy()
+      }));
 
-      // Authorization of Client Connection -- Move out of lifecycle
+      // Authorization of Client Connection
       // authSetup(io, {
       //   authenticate: (socket, data, callback) => {
       //       callback(null, true);
@@ -239,6 +242,10 @@ class Server extends Node {
      });
   }
 
+  /**
+   * Load Http Routes
+   * Scan all Routes in service and attach them to the express app.
+   */
   loadHttpRoutes() {
     console.log("Loading Http Routes");
     let self = this;
@@ -274,4 +281,5 @@ class Server extends Node {
 
 }
 
+// Public
 module.exports.Server = Server;
