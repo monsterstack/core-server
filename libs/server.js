@@ -94,6 +94,8 @@ class Server extends Node {
       console.log('Assign express');
       self.http = require('http').Server(self.app);
       self.io = require('socket.io')(self.http);
+
+      self.io.set('origins', '*');
       self.ioredis = require('socket.io-redis');
 
       self.app.stash = (level, message) => {
