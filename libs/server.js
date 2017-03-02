@@ -8,7 +8,7 @@ const express = require('express');
 const path = require('path');
 const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
-const responseTime = require('response-time');
+const responseTime = require('connect-middleware-response-time');
 const bearerToken = require('express-bearer-token');
 const Node = require('./node').Node;
 
@@ -137,7 +137,7 @@ class Server extends Node {
 
 
       // Response Time Middleware
-      self.app.use(responseTime((req, res, time) => {
+      self.app.use(responseTime((time) => {
         let metric = {
           serviceId: self.id,
           type: 'response.time',
