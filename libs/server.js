@@ -137,7 +137,7 @@ class Server extends Node {
 
 
       // Response Time Middleware
-      self.app.use(responseTime({ suffix: false, digits: 1 })((req, res, time) => {
+      self.app.use(responseTime((req, res, time) => {
         let metric = {
           serviceId: self.id,
           type: 'response.time',
