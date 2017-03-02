@@ -143,8 +143,8 @@ class Server extends Node {
           type: 'response.time',
           value: time
         };
-        if(self.boundProxy)
-          self.boundProxy.sendResponseTimeMetric(metric);
+        if(app.proxy)
+          app.proxy.sendResponseTimeMetric(metric);
       }));
 
       self.getIp().then((ip) => {
@@ -180,13 +180,17 @@ class Server extends Node {
 
 
       // Listen to messages sent from the master. Ignore everything else.
-      process.on('message', (message, connection) => {
-        if (message !== 'sticky-session:connection') {
+      process.on('message', (message, obj) => {
+        if (message === 'service.id') {
+            self.id = obj;
             return;
-        }
+        } else if (message !== 'sticky-session:connection') {
+            return;
+        } 
 
         // Emulate a connection event on the server by emitting the
         // event with the connection the master sent us.
+        let connection = obj;
         self.http.emit('connection', connection);
 
         connection.resume();

@@ -187,6 +187,8 @@ class Cluster extends Node {
                   }, 2000);
               });
 
+              self.workers[i].send('service.id', self.id);
+
           }(i);
       }
 
