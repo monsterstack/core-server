@@ -143,6 +143,8 @@ class Server extends Node {
           type: 'response.time',
           value: time
         };
+        console.log('Response Time Metric ( server route )');
+        console.log(metric);
         if(app.proxy)
           app.proxy.sendResponseTimeMetric(metric);
       }));
