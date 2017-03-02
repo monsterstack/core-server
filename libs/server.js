@@ -180,7 +180,7 @@ class Server extends Node {
 
 
       // Listen to messages sent from the master. Ignore everything else.
-      process.on('message', (message, connectionj) => {
+      process.on('message', (message, connection) => {
         if (typeof message === "object" && message.hasOwnProperty("id")) {
             self.id = message.id;
             return;
