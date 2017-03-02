@@ -180,9 +180,9 @@ class Server extends Node {
 
 
       // Listen to messages sent from the master. Ignore everything else.
-      process.on('message', (message, obj) => {
-        if (message === 'service.id') {
-            self.id = obj.id;
+      process.on('message', (message, connectionj) => {
+        if (typeof message === "object" && message.hasOwnProperty("id")) {
+            self.id = message.id;
             return;
         } else if (message !== 'sticky-session:connection') {
             return;
@@ -190,7 +190,6 @@ class Server extends Node {
 
         // Emulate a connection event on the server by emitting the
         // event with the connection the master sent us.
-        let connection = obj;
         self.http.emit('connection', connection);
 
         connection.resume();
