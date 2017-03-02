@@ -140,7 +140,7 @@ class Server extends Node {
       self.app.use(responseTime({ suffix: false, digits: 1 }, (req, res, time) => {
         let metric = {
           serviceId: self.id,
-          type: self.name,
+          type: 'response.time',
           value: time
         };
         if(self.boundProxy)
