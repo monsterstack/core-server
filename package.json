@@ -13,6 +13,7 @@
     "body-parser": "^1.16.0",
     "bronto": "^0.1.0",
     "config": "^1.24.0",
+    "connect-middleware-response-time": "^1.0.0",
     "cors": "^2.8.1",
     "discovery-middleware": "https://github.com/monsterstack/discovery-middleware#development",
     "ejs": "^2.5.5",
