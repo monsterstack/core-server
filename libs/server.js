@@ -134,6 +134,18 @@ class Server extends Node {
       self.app.authCheck = new AuthCheckMiddleware(self.app);
       self.app.realizationCheck = new RealizationCheckMiddleware(self.app);
 
+
+      // Response Time Middleware
+      self.app.use(responseTime({ suffix: false, digits: 1 }, (req, res, time) => {
+        let metric = {
+          serviceId: self.id,
+          type: self.name,
+          value: time
+        };
+        if(self.boundProxy)
+          self.boundProxy.sendResponseTimeMetric(metric);
+      }));
+
       self.getIp().then((ip) => {
         if(ip)
           self.app.listeningIp = ip;
