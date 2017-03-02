@@ -141,7 +141,7 @@ class Server extends Node {
         let metric = {
           serviceId: self.id,
           type: 'response.time',
-          value: time
+          value: Math.round(time)
         };
         console.log('Response Time Metric ( server route )');
         console.log(metric);
