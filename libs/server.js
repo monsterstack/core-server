@@ -182,7 +182,7 @@ class Server extends Node {
       // Listen to messages sent from the master. Ignore everything else.
       process.on('message', (message, obj) => {
         if (message === 'service.id') {
-            self.id = obj;
+            self.id = obj.id;
             return;
         } else if (message !== 'sticky-session:connection') {
             return;
