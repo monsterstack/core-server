@@ -145,8 +145,8 @@ class Server extends Node {
         };
         console.log('Response Time Metric ( server route )');
         console.log(metric);
-        if(app.proxy)
-          app.proxy.sendResponseTimeMetric(metric);
+        if(self.app.proxy)
+          self.app.proxy.sendResponseTimeMetric(metric);
       }));
 
       self.getIp().then((ip) => {
