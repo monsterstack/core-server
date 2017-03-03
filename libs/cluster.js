@@ -5,6 +5,7 @@ const cluster = require('cluster');
 const net = require('net');
 const Leader = require('./leader');
 const hash = require( './hash');
+const expressMetrics = require('express-metrics');
 
 const Node = require('./node').Node;
 
@@ -229,6 +230,8 @@ class Cluster extends Node {
           self.announce(config, server.address().port);
         }, 6000);
       });
+
+      expressMetrics.listen(myPort+1);
 
       /** Deal with Election of Group Leader **/
       let redisClient = redis.createClient({

@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 const responseTime = require('connect-middleware-response-time');
 const bearerToken = require('express-bearer-token');
 const Node = require('./node').Node;
+const expressMetrics = require('express-metrics');
 
 const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
 const RealizationCheckMiddleware = require('discovery-middleware').RealizationCheckMiddleware;
@@ -168,6 +169,9 @@ class Server extends Node {
       self.app.authCheck = new AuthCheckMiddleware(self.app);
       self.app.realizationCheck = new RealizationCheckMiddleware(self.app);
 
+      self.app.use(expressMetrics({
+        cluster: true
+      }));
 
       // Response Time Middleware
       self.app.use(responseTime((time) => {
