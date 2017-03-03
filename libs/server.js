@@ -18,6 +18,13 @@ const RealizationCheckMiddleware = require('discovery-middleware').RealizationCh
 const CircuitBreakerMiddleware = require('../middleware/circuitBreaker').CircuitBreakerMiddleware;
 
 class Server extends Node {
+  /**
+   * Create Server
+   * @param {string} - name
+   * @param {obj} - announcement
+   * @param {[string]} - types
+   * @param {obj} - options
+   */
   constructor(name, announcement, types, options) {
     super();    
     this.id = require('node-uuid').v1();
@@ -51,22 +58,43 @@ class Server extends Node {
     this.boundProxy = null;
   }
 
+  /**
+   * Get Io
+   * @returns {Io}
+   */
   getIo() {
     return this.io;
   }
 
+  /**
+   * Get IoRedis
+   * @returns {IoRedis}
+   */
   getIoRedis() {
     return this.ioRedis;
   }
 
+  /**
+   * Get Http
+   * @returns {Http}
+   */
   getHttp() {
     return this.http;
   }
 
+  /**
+   * Get App
+   * @returns {App} - Express App
+   */
   getApp() {
     return this.app;
   }
 
+  /**
+   * Get Me
+   * 
+   * @returns {Promise<ServiceDescriptor>}
+   */
   getMe() {
     let descriptor = {
       type: this.name,
@@ -88,6 +116,11 @@ class Server extends Node {
     return p;
   }
 
+  /**
+   * Initialize
+   * 
+   * @returns {Promise<Void>}
+   */
   init() {
     let self = this;
     let p = new Promise((resolve, reject) => {
@@ -164,6 +197,11 @@ class Server extends Node {
     return p;
   }
 
+  /**
+   * Listen - Bind to configured port and listen
+   * 
+   * @returns {Promise<Void>} 
+   */
   listen() {
     let self = this;
     let p = new Promise((resolve, reject) => {
@@ -206,6 +244,10 @@ class Server extends Node {
    * Announce the 'ServiceDescriptor' to the DiscoveryService
    * In a typical local Cluster setup, the cluster master does the announcement.
    * When running a service standalone, the service will be able to announce and query.
+   * @param {ExitHandlerFactory}
+   * @param {ModelRepository}
+   * 
+   * @returns {Void}
    */
   announce(exitHandlerFactory, modelRepository) {
     this.makeAnnouncement = true; /// Not being set in constructor for some reason @TODO: FIX
@@ -244,6 +286,9 @@ class Server extends Node {
    * announcement of a 'ServiceDescriptor' representing all the workers.
    *
    * Remember all access to a 'worker' runs through the master port binding.
+   * @param {ExitHandlerFactory}
+   * @param {ModelRepository}
+   * @returns {Void}
    */
   query(exitHandlerFactory, modelRepository) {
     let self = this;
@@ -263,6 +308,8 @@ class Server extends Node {
   /**
    * Load Http Routes
    * Scan all Routes in service and attach them to the express app.
+   * 
+   * @returns {Void}
    */
   loadHttpRoutes() {
     console.log("Loading Http Routes");
@@ -280,6 +327,9 @@ class Server extends Node {
   /**
    * Cleanup handler
    * Perform any necessary cleanup for the server on exit.
+   * 
+   * @param {ExitHandlerFactory}
+   * @param {ModelRepository}
    */
   _bindCleanUp(exitHandlerFactory, modelRepository) {
     process.stdin.resume();//so the program will not close instantly
