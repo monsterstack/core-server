@@ -16,7 +16,6 @@ class ContainerIdentifierMiddleware {
             next();
         };
     }
-  }
 }
 
 
