@@ -10,7 +10,9 @@ class ContainerIdentifierMiddleware {
     containerIdentification(app) {
         let self = this;
         return (req, res, next) => {
-            res.header(CONTAINER_ADDR_HEADER_KEY, app.listeningIp);
+            let headers = {};
+            headers[CONTAINER_ADDR_HEADER_KEY] = app.listeningIp;
+            res.set(headers);
             next();
         };
     }
