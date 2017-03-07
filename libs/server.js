@@ -167,7 +167,9 @@ class Server extends Node {
 
       // parse an HTML body into a string
       self.app.use(bodyParser.text({ type: 'text/html' }));
-      console.log("Intializing Middleware")
+      console.log("Intializing Middleware");
+      self.app.use(self.containerIdentifier.containerIdentification(self.app));
+
       self.app.use(self.circuitBreaker.inboundMiddleware(self.app));
       self.app.authCheck = new AuthCheckMiddleware(self.app);
       self.app.realizationCheck = new RealizationCheckMiddleware(self.app);
@@ -328,7 +330,6 @@ class Server extends Node {
 
       // Last Middleware -- @TODO - Allow the passing in of a function to load additional outbound Middleware
       self.app.use(self.circuitBreaker.outboundMiddleware(self.app));
-      self.app.use(self.containerIdentifier.containerIdentification(self.app));
     });
   }
 
