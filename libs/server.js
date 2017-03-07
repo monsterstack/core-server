@@ -17,6 +17,7 @@ const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
 const RealizationCheckMiddleware = require('discovery-middleware').RealizationCheckMiddleware;
 
 const CircuitBreakerMiddleware = require('../middleware/circuitBreaker').CircuitBreakerMiddleware;
+const ContainerIdentifierMiddleware = require('../middleware/containerIdentifier').ContainerIdentifierMiddleware;
 
 class Server extends Node {
   /**
@@ -41,6 +42,8 @@ class Server extends Node {
     this.circuitBreaker = new CircuitBreakerMiddleware({
       maxFailureAllowed: 5
     });
+
+    this.containerIdentifier = new ContainerIdentifierMiddleware();
 
     if(options) {
       useRandomWorkerPort = options.useRandomWorkerPort || false;
@@ -325,6 +328,7 @@ class Server extends Node {
 
       // Last Middleware -- @TODO - Allow the passing in of a function to load additional outbound Middleware
       self.app.use(self.circuitBreaker.outboundMiddleware(self.app));
+      self.app.use(self.containerIdentifier.containerIdentification(self.app));
     });
   }
 
