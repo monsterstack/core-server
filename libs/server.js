@@ -9,7 +9,7 @@ const express = require('express');
 const path = require('path');
 const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
-const responseTime = require('connect-middleware-response-time');
+// const responseTime = require('connect-middleware-response-time');
 const bearerToken = require('express-bearer-token');
 const Node = require('./node').Node;
 const expressMetrics = require('express-metrics');
@@ -19,6 +19,7 @@ const RealizationCheckMiddleware = require('discovery-middleware').RealizationCh
 
 const CircuitBreakerMiddleware = require('../middleware/circuitBreaker').CircuitBreakerMiddleware;
 const ContainerIdentifierMiddleware = require('../middleware/containerIdentifier').ContainerIdentifierMiddleware;
+const ResponseTimeMiddleware = require('../middleware/responseTime.js').ResponseTimeMiddleware;
 
 class Server extends Node {
   /**
@@ -182,7 +183,8 @@ class Server extends Node {
       }
 
       // Response Time Middleware
-      self.app.use(responseTime((time) => {
+      let responseTimeMiddleware = new ResponseTimeMiddleware();
+      self.app.use(responseTimeMiddleware.computeResponseTime((time) => {
         let metric = {
           serviceId: self.id,
           type: 'response.time',
