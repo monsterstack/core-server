@@ -14,7 +14,7 @@ class ResponseTimeMiddleware {
 
             let compute = () => {
 
-                removeEventListeners(res);
+                removeListeners(res);
                 let stop = Date.now();
                 let diff = stop - start;
 
@@ -22,7 +22,7 @@ class ResponseTimeMiddleware {
             };
 
             let cancel = () => {
-                removeEventListeners(res);
+                removeListeners(res);
                 clbk(NaN);
             }
 
