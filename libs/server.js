@@ -174,9 +174,11 @@ class Server extends Node {
       self.app.authCheck = new AuthCheckMiddleware(self.app);
       self.app.realizationCheck = new RealizationCheckMiddleware(self.app);
 
-      self.app.use(expressMetrics({
-        cluster: true
-      }));
+      if(self.isPartOfChildProcess()) {
+        self.app.use(expressMetrics({
+          cluster: true
+        }));
+      }
 
       // Response Time Middleware
       self.app.use(responseTime((time) => {

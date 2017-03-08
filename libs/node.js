@@ -12,7 +12,6 @@ class Node extends EventEmitter {
     getIp() {
         let p = new Promise((resolve, reject) => {
             let ip = require('ip').address();
-            console.log(`HOST IP FROM env is ${process.env.HOST_IP}`)
             if(process.env.HOST_IP)
                 ip = process.env.HOST_IP;
             else if(process.env.CONTAINER_ADDR) 
@@ -20,6 +19,14 @@ class Node extends EventEmitter {
             resolve(ip);
         });
         return p;
+    }
+
+    isPartOfChildProcess() {
+        if (process.send === undefined) { 
+            return false;
+        } else {        
+            return true;
+        }
     }
 
     onProxyReady(callback) {

@@ -14,7 +14,6 @@ describe('node-service', (done) => {
     it('Node Ip is valid', (done) => {
         node.getIp().then((ip) => {
             if(ip) {
-                console.log(ip);
                 done();
             } else {
                 done(new Error("Missing Ip"));
@@ -23,6 +22,16 @@ describe('node-service', (done) => {
             done(err);
         })
     });
+
+    it('Node Detect being part of child process', (done) => {
+        let isPartOfChildProcess = node.isPartOfChildProcess();
+        
+        if(isPartOfChildProcess) 
+            done(new Error('Expecting to `not` be part of child process'));
+        else {
+            done();
+        }
+    })
 
     after((done) => {
         done();
