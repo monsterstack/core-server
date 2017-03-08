@@ -191,7 +191,7 @@ class Server extends Node {
           value: Math.round(time)
         };
         debug('Response Time Metric ( server route )');
-        debug(metric);
+        console.log(metric);
         if(self.app.proxy)
           self.app.proxy.sendResponseTimeMetric(metric);
       }));
