@@ -13,7 +13,6 @@ describe('health-service', (done) => {
 
     it('Health calculation has loadAvg', (done) => {
         healthService.getHealth().then((health) => {
-            console.log(health);
             if(health.loadAvg) {
                 if(typeof health.loadAvg === 'number')
                     done();
@@ -29,7 +28,6 @@ describe('health-service', (done) => {
 
     it('Health calculation has cpuAvg', (done) => {
         healthService.getHealth().then((health) => {
-            console.log(health);
             if(health.cpuPercentUsage) {
                 if(typeof health.cpuPercentUsage === 'number')
                     done();

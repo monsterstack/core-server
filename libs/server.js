@@ -1,4 +1,5 @@
 'use strict';
+const debug = require('debug')('core-server');
 const glob = require('multi-glob').glob;
 const Promise = require('promise');
 const config = require('config');
@@ -129,7 +130,7 @@ class Server extends Node {
     let self = this;
     let p = new Promise((resolve, reject) => {
       self.app = require('express')();
-      console.log('Assign express');
+      debug('Assign express');
       self.http = require('http').Server(self.app);
       self.io = require('socket.io')(self.http);
       self.ioredis = require('socket.io-redis');
@@ -142,7 +143,7 @@ class Server extends Node {
         });
       };
 
-      console.log('Enabling cors');
+      debug('Enabling cors');
       self.app.use(cors());
       self.app.use(bodyParser.urlencoded({ extended: true }));
       self.app.use(bodyParser.json({ type: 'application/json' }));
@@ -167,7 +168,7 @@ class Server extends Node {
 
       // parse an HTML body into a string
       self.app.use(bodyParser.text({ type: 'text/html' }));
-      console.log("Intializing Middleware");
+      debug("Intializing Middleware");
       self.app.use(self.containerIdentifier.containerIdentification(self.app));
 
       self.app.use(self.circuitBreaker.inboundMiddleware(self.app));
@@ -187,8 +188,8 @@ class Server extends Node {
           type: 'response.time',
           value: Math.round(time)
         };
-        console.log('Response Time Metric ( server route )');
-        console.log(metric);
+        debug('Response Time Metric ( server route )');
+        debug(metric);
         if(self.app.proxy)
           self.app.proxy.sendResponseTimeMetric(metric);
       }));
@@ -198,9 +199,8 @@ class Server extends Node {
           self.app.listeningIp = ip;
       }).catch((err) => {
         console.log('Failed to get ip');
+        console.log(err);
       });
-
-      console.log('Resolve');
 
       resolve();
 
@@ -216,15 +216,15 @@ class Server extends Node {
   listen() {
     let self = this;
     let p = new Promise((resolve, reject) => {
-      console.log('Attempt bind on port');
+      debug('Attempt bind on port');
       let portNum = config.port;
       if(self.useRandomWorkerPort === true) {
         portNum = 0;
       }
 
-      console.log(`Starting ${self.name} on ${portNum}`);
+      debug(`Starting ${self.name} on ${portNum}`);
       self.http.listen(portNum, () => {
-        console.log(`listening on *:${portNum}`);
+        debug(`listening on *:${portNum}`);
         self.app.listeningPort = self.http.address().port;
         resolve();
       });
@@ -271,8 +271,8 @@ class Server extends Node {
       let self = this;
       // Discovery Proxy -- init / announce
       this.getMe().then((me) => {
-        console.log(me);
-        console.log(`http://${this.discoveryHost}:${this.discoveryPort}`);
+        debug(me);
+        debug(`http://${this.discoveryHost}:${this.discoveryPort}`);
         this.proxyLib.connect({addr:`http://${this.discoveryHost}:${this.discoveryPort}`}, (err, p) => {
           p.bind({ descriptor: me, types: self.types });
           self.boundProxy = p;
@@ -305,7 +305,7 @@ class Server extends Node {
     let self = this;
     if(exitHandlerFactory)
       this._bindCleanUp(exitHandlerFactory, modelRepository);
-    console.log(`http://${this.discoveryHost}:${this.discoveryPort}`);
+    debug(`http://${this.discoveryHost}:${this.discoveryPort}`);
     this.proxyLib.connect({addr:`http://${this.discoveryHost}:${this.discoveryPort}`}, (err, p) => {
         p.bind({ types: self.types });
         self.boundProxy = p;
@@ -323,7 +323,7 @@ class Server extends Node {
    * @returns {Void}
    */
   loadHttpRoutes() {
-    console.log("Loading Http Routes");
+    debug("Loading Http Routes");
     let self = this;
     glob([appRoot.path + "/api/v1/routes/*.routes.js",appRoot.path + "/app/routes/*.routes.js"] , {}, (err, files) => {
       for(let f in files) {

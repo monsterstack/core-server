@@ -1,4 +1,5 @@
 'use strict';
+const debug = require('debug')('core-server');
 const redis = require('redis');
 const config = require('config');
 const cluster = require('cluster');
@@ -81,7 +82,7 @@ class Cluster extends Node {
    * @param config Configuration
    */
   getMe(config, portOverride) {
-    console.log(this.announcement);
+    debug(this.announcement);
     let descriptor = {
       type: this.announcement.name,
       healthCheckRoute: '/health',
@@ -136,7 +137,7 @@ class Cluster extends Node {
     let self = this;
     //Dispatch Proxy -- init / announce
     self.getMe(config, port).then((me) => {
-      console.log(me);
+      debug(me);
       let discoveryHost = config.discovery.host;
       let discoveryPort = config.discovery.port;
       self.proxy.connect({addr:`http://${discoveryHost}:${discoveryPort}`}, (err, p) => {
@@ -144,8 +145,8 @@ class Cluster extends Node {
           console.log(err);
         } else {
           // Clusters only announce.  Leave query to workers.
-          console.log('Binding to Discovery Service and announcing...');
-          console.log(me);
+          debug('Binding to Discovery Service and announcing...');
+          debug(me);
           p.bind({ descriptor: me, types: [] });
           self.proxy = p;
         }
@@ -161,7 +162,7 @@ class Cluster extends Node {
    */
   reannounce() {
     if(this.proxy) {
-      console.log('Reannouncing...');
+      debug('Reannouncing...');
       let self = this;
       let port = self.clusterPort;
       this.getMe(config, port).then((me) => {
@@ -201,11 +202,11 @@ class Cluster extends Node {
       }
 
       self.cluster.on('listening', (worker, address) => {
-          console.log('A worker is now connected to ' + address.address + ':' + address.port);
+          debug('A worker is now connected to ' + address.address + ':' + address.port);
       });
 
       self.cluster.on('online', (worker) => {
-          console.log("Worker is online");
+          debug("Worker is online");
       });
 
       let server = net.createServer({ pauseOnConnect: true }, (c) => {
@@ -233,7 +234,7 @@ class Cluster extends Node {
       server.listen(myPort, () => {
         setTimeout(() => {
           //Dispatch Proxy -- init / announce
-          console.log('Cluster Announce');
+          debug('Cluster Announce');
           self.announce(config, server.address().port);
         }, 6000);
       });
@@ -268,13 +269,13 @@ class Cluster extends Node {
 
         let leader = new Leader(redisClient, redisSub);
         leader.onStepUp((groupName) => {
-          console.log("******************* I am master");
-          console.log(groupName);
+          debug("******************* I am master");
+          debug(`Steppoing up on ${groupName}`);
           self.iAmMaster = true;
         });
 
         leader.onStepDown((groupName) => {
-          console.log(groupName);
+          debug(`Stepping down from ${groupName}`);
           self.iAmMaster = false;
         });
 

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cd tests && mocha *-test.js --reporter nyan"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +15,7 @@
     "config": "^1.24.0",
     "connect-middleware-response-time": "^1.0.0",
     "cors": "^2.8.1",
+    "debug": "^2.6.1",
     "discovery-middleware": "https://github.com/monsterstack/discovery-middleware#development",
     "ejs": "^2.5.5",
     "express": "^4.14.0",

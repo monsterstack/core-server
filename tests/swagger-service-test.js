@@ -17,7 +17,6 @@ describe('swagger-service', (done) => {
 
     it('Swagger host appended', (done) => {
         swaggerService.getSwagger().then((swagger) => {
-            console.log(swagger);
             if(swagger.host) {
                 done();
             } else {
@@ -30,7 +29,6 @@ describe('swagger-service', (done) => {
 
     it('Swagger schemes appended', (done) => {
         swaggerService.getSwagger().then((swagger) => {
-            console.log(swagger);
             if(swagger.schemes) {
                 done();
             } else {
