@@ -5,7 +5,7 @@ const config = require('config');
 const cluster = require('cluster');
 const net = require('net');
 const Leader = require('./leader');
-const hash = require( './hash');
+const Hash = require( './hash').Hash;
 const expressMetrics = require('express-metrics');
 
 const Node = require('./node').Node;
@@ -211,9 +211,10 @@ class Cluster extends Node {
 
       let server = net.createServer({ pauseOnConnect: true }, (c) => {
           let seed = ~~(Math.random() * 1e9);
+          let hasher = new Hash();
           // Get int31 hash of ip
           let worker,
-              ipIndex = hash((c.remoteAddress || '').split(/\./g), seed);
+              ipIndex = hasher.ipHash((c.remoteAddress || '').split(/\./g), seed);
           // Pass connection to worker
           worker = self.workers[ipIndex%self.workers.length];
           try {
