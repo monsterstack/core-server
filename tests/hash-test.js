@@ -17,10 +17,10 @@ describe('hash-test', (done) => {
 
 
     it('Test Ip Hash', (done) => {
-        let expectation = 2896546753;
+        let expectation = 2333676528;
 
         let hasher = new Hash();
-        let result = hasher.ipHash(['10.0.0.1', '12.1.5.1', '12.3.3.2'], 'fo4444333');
+        let result = hasher.ipHash([[0, 1], [2, 3], [4, 5]], 'fo4444333');
         if(result === expectation) {
             done();
         } else {
