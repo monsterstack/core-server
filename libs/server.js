@@ -5,6 +5,7 @@ const Promise = require('promise');
 const config = require('config');
 const stash = require('stash');
 const cors = require('cors');
+const compression = require('compression');
 const express = require('express');
 const path = require('path');
 const appRoot = require('app-root-path');
@@ -144,6 +145,8 @@ class Server extends Node {
         });
       };
 
+      debug('Enabling compression');
+      self.app.use(compression());
       debug('Enabling cors');
       self.app.use(cors());
       self.app.use(bodyParser.urlencoded({ extended: true }));
