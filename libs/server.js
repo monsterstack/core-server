@@ -25,10 +25,10 @@ const ResponseTimeMiddleware = require('../middleware/responseTime.js').Response
 class Server extends Node {
   /**
    * Create Server
-   * @param {string} - name
-   * @param {obj} - announcement
-   * @param {[string]} - types
-   * @param {obj} - options
+   * @param {String} - name
+   * @param {Object} - announcement
+   * @param {[String]} - types
+   * @param {Object} - options
    */
   constructor(name, announcement, types, options) {
     super();    
@@ -67,7 +67,7 @@ class Server extends Node {
 
   /**
    * Get Io
-   * @returns {Io}
+   * @returns {Object} - IO
    */
   getIo() {
     return this.io;
@@ -75,7 +75,7 @@ class Server extends Node {
 
   /**
    * Get IoRedis
-   * @returns {IoRedis}
+   * @returns {Object} - IoRedis
    */
   getIoRedis() {
     return this.ioRedis;
@@ -83,7 +83,7 @@ class Server extends Node {
 
   /**
    * Get Http
-   * @returns {Http}
+   * @returns {Object} - Http
    */
   getHttp() {
     return this.http;
@@ -100,7 +100,7 @@ class Server extends Node {
   /**
    * Get Me
    * 
-   * @returns {Promise<ServiceDescriptor>}
+   * @returns {Promise}
    */
   getMe() {
     let descriptor = {
@@ -126,7 +126,7 @@ class Server extends Node {
   /**
    * Initialize
    * 
-   * @returns {Promise<Void>}
+   * @returns {Promise}
    */
   init() {
     let self = this;
@@ -216,7 +216,7 @@ class Server extends Node {
   /**
    * Listen - Bind to configured port and listen
    * 
-   * @returns {Promise<Void>} 
+   * @returns {Promise} 
    */
   listen() {
     let self = this;
@@ -260,8 +260,8 @@ class Server extends Node {
    * Announce the 'ServiceDescriptor' to the DiscoveryService
    * In a typical local Cluster setup, the cluster master does the announcement.
    * When running a service standalone, the service will be able to announce and query.
-   * @param {ExitHandlerFactory}
-   * @param {ModelRepository}
+   * @param {Object} - ExitHandlerFactory
+   * @param {Object} - ModelRepository
    * 
    * @returns {Void}
    */
@@ -302,8 +302,9 @@ class Server extends Node {
    * announcement of a 'ServiceDescriptor' representing all the workers.
    *
    * Remember all access to a 'worker' runs through the master port binding.
-   * @param {ExitHandlerFactory}
-   * @param {ModelRepository}
+   * @param {Object} - ExitHandlerFactory
+   * @param {Object} - ModelRepository
+   * 
    * @returns {Void}
    */
   query(exitHandlerFactory, modelRepository) {
@@ -344,8 +345,10 @@ class Server extends Node {
    * Cleanup handler
    * Perform any necessary cleanup for the server on exit.
    * 
-   * @param {ExitHandlerFactory}
-   * @param {ModelRepository}
+   * @param {Object} - ExitHandlerFactory
+   * @param {Object} - ModelRepository
+   * 
+   * @returns {Void}
    */
   _bindCleanUp(exitHandlerFactory, modelRepository) {
     process.stdin.resume();//so the program will not close instantly

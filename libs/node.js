@@ -3,12 +3,19 @@ const ip = require('ip');
 const Promise = require('promise');
 const EventEmitter = require('events');
 
+/**
+ * Base Node
+ */
 class Node extends EventEmitter {
 
     constructor() {
         super();
     }
 
+    /**
+     * Get Ip
+     * @returns {Promise}
+     */
     getIp() {
         let p = new Promise((resolve, reject) => {
             let ip = require('ip').address();
@@ -21,6 +28,10 @@ class Node extends EventEmitter {
         return p;
     }
 
+    /**
+     * Is part of child process?
+     * @returns {Boolean}
+     */
     isPartOfChildProcess() {
         if (process.send === undefined) { 
             return false;
@@ -29,18 +40,29 @@ class Node extends EventEmitter {
         }
     }
 
+    /**
+     * On Proxy Ready
+     * @param callback {Function}
+     * @returns {Object} - Proxy via callback
+     */
     onProxyReady(callback) {
         this.once('proxy.ready', (proxy) => {
             callback(proxy);
         });
     }
 
+    /**
+     * Emit Proxy Ready
+     * @param proxy {Object}
+     * @returns {Void}
+     */
     emitProxyReady(proxy) {
         this.emit('proxy.ready', proxy);
     }
 
     /**
      * Redis Retry strategy
+     * @returns {Function} - Redis Strategy
      */
     redisRetryStrategy() {
         return (options) => {

@@ -7,6 +7,12 @@ const Bronto = require('bronto');
  * cluster of nodes.
  */
 class Leader {
+  /**
+   * Create Leader
+   * @param redisCli {Object} - Redis Client 
+   * @param redisSub {Object} - Redis subscriber
+   * @param options {Object} - Options
+   */
   constructor(redisCli, redisSub, options) {
     this.redisCli = redisCli;
     this.redisSub = redisSub;
@@ -25,6 +31,8 @@ class Leader {
 
   /**
    * Handle cases where the Leader has 'stepped_down'
+   * @param handler {Object} - callback that takes election results
+   * @return {Object} - Election result
    */
   onStepDown(handler) {
     this.me.on('stepped_down', (election) => {
@@ -34,6 +42,8 @@ class Leader {
 
   /**
    * Handle cases where the Leader has 'stepped_up'
+   * @param handler {Object} - callback that takes election results
+   * @return {Object} - Election result
    */
   onStepUp(handler) {
     this.me.on('master', (election) => {
@@ -43,6 +53,9 @@ class Leader {
 
   /**
    * Join cluster
+   * @param group {String}
+   * 
+   * @returns {Void}
    */
   join(group) {
     this.me.join(group);

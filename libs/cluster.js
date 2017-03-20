@@ -21,11 +21,10 @@ class Cluster extends Node {
 
   /**
    * Create Cluster
-   * @param name  Cluster Group Name
-   * @param announcement ServiceDescriptor details about the Service Cluster being
+   * @param name  {String} - Cluster Group Name
+   * @param announcement {Object} - ServiceDescriptor details about the Service Cluster being
    *        formed -- Required
-   * @param options Configuration Options
-   *
+   * @param options {Object}
    *
    * Valid Options:
    * - numWorkers ( integer )
@@ -79,7 +78,10 @@ class Cluster extends Node {
    * Get Me
    * Generate ServiceDescriptor from announcement data and config.
    * Also, supplement with endpoint details using known ip address and configured port.
-   * @param config Configuration
+   * @param config {Object}
+   * @param portOverride {Number}
+   * 
+   * @returns {Promise}
    */
   getMe(config, portOverride) {
     debug(this.announcement);
@@ -115,6 +117,9 @@ class Cluster extends Node {
    *
    * Sample ExitHandler.
    * @TODO: Add Sample Here.
+   * 
+   * @param exitHandler {Object}
+   * @returns {Void}
    */
   bindExitHandler(exitHandler) {
     process.stdin.resume();//so the program will not close instantly
@@ -130,8 +135,9 @@ class Cluster extends Node {
 
   /**
    * Announce yourself to the Discovery Service
-   * @param config
-   * @param port
+   * @param config {Object}
+   * @param port {Number}
+   * @returns {Void}
    */
   announce(config, port) {
     let self = this;
@@ -159,6 +165,8 @@ class Cluster extends Node {
 
   /**
    * Reannounce
+   * 
+   * @returns {Void}
    */
   reannounce() {
     if(this.proxy) {
@@ -179,6 +187,8 @@ class Cluster extends Node {
    * external cluster members.
    *
    * self.name will be used as the Cluster Group Name.
+   * 
+   * @returns {Void}
    */
   start() {
     let self = this;
