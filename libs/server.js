@@ -10,7 +10,6 @@ const express = require('express');
 const path = require('path');
 const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
-// const responseTime = require('connect-middleware-response-time');
 const bearerToken = require('express-bearer-token');
 const Node = require('./node').Node;
 const expressMetrics = require('express-metrics');
