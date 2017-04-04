@@ -14,12 +14,17 @@ const bearerToken = require('express-bearer-token');
 const Node = require('./node').Node;
 const expressMetrics = require('express-metrics');
 
-const AuthCheckMiddleware = require('security-middleware').AuthCheckMiddleware;
-const RealizationCheckMiddleware = require('discovery-middleware').RealizationCheckMiddleware;
+const sm = require('security-middleware');
+const dm = require('discovery-middleware');
+const cim = require('./middleware/containerIdentifier');
+const cbm = require('./middleware/circuitBreaker');
+const rtm = require('./middleware/responseTime');
 
-const CircuitBreakerMiddleware = require('../middleware/circuitBreaker').CircuitBreakerMiddleware;
-const ContainerIdentifierMiddleware = require('../middleware/containerIdentifier').ContainerIdentifierMiddleware;
-const ResponseTimeMiddleware = require('../middleware/responseTime.js').ResponseTimeMiddleware;
+const AuthCheckMiddleware = sm.AuthCheckMiddleware;
+const RealizationCheckMiddleware = dm.RealizationCheckMiddleware;
+const CircuitBreakerMiddleware = cbm.CircuitBreakerMiddleware;
+const ContainerIdentifierMiddleware = cim.ContainerIdentifierMiddleware;
+const ResponseTimeMiddleware = rtm.ResponseTimeMiddleware;
 
 class Server extends Node {
   /**
@@ -30,7 +35,7 @@ class Server extends Node {
    * @param {Object} - options
    */
   constructor(name, announcement, types, options) {
-    super();    
+    super();
     this.id = require('node-uuid').v1();
     this.name = name;
     this.announcement = announcement;
@@ -42,12 +47,12 @@ class Server extends Node {
     let makeAnnouncement = false;
 
     this.circuitBreaker = new CircuitBreakerMiddleware({
-      maxFailureAllowed: 5
+      maxFailureAllowed: 5,
     });
 
     this.containerIdentifier = new ContainerIdentifierMiddleware();
 
-    if(options) {
+    if (options) {
       useRandomWorkerPort = options.useRandomWorkerPort || false;
       discoveryHost = options.discoveryHost || '0.0.0.0';
       discoveryPort = options.discoveryPort || 7616;
@@ -62,6 +67,24 @@ class Server extends Node {
 
     this.proxyLib = require('discovery-proxy');
     this.boundProxy = null;
+
+    this.routeCount = 0;
+  }
+
+  /**
+   * Get Bound Proxy
+   * @returns {Object} - DiscoveryProxy
+   */
+  getBoundProxy() {
+    return this.boundProxy;
+  }
+
+  /**
+   * Get Route Count
+   * @returns {Number} - number of loaded routes
+   */
+  getRouteCount() {
+    return this.routeCount;
   }
 
   /**
@@ -98,7 +121,6 @@ class Server extends Node {
 
   /**
    * Get Me
-   * 
    * @returns {Promise}
    */
   getMe() {
@@ -112,11 +134,11 @@ class Server extends Node {
       region: this.announcement.region,
       stage: this.announcement.stage,
       status: 'Online',
-      version: this.announcement.version
+      version: this.announcement.version,
     };
 
     let p = this.getIp().then((ip) => {
-      descriptor.endpoint = "http://"+ip+":"+config.port
+      descriptor.endpoint = `http://${ip}:${config.port}`;
       return descriptor;
     });
     return p;
@@ -124,42 +146,41 @@ class Server extends Node {
 
   /**
    * Initialize
-   * 
    * @returns {Promise}
    */
   init() {
-    let self = this;
+    let _this = this;
     let p = new Promise((resolve, reject) => {
-      self.app = require('express')();
+      _this.app = require('express')();
       debug('Assign express');
-      self.http = require('http').Server(self.app);
-      self.io = require('socket.io')(self.http);
-      self.ioredis = require('socket.io-redis');
+      _this.http = require('http').Server(_this.app);
+      _this.io = require('socket.io')(_this.http);
+      _this.ioredis = require('socket.io-redis');
 
-      self.app.stash = (level, message) => {
+      _this.app.stash = (level, message) => {
         stash.send({
           '@timestamp': new Date(),
-          'message': message,
-          'level': level
+          message: message,
+          level: level,
         });
       };
 
       debug('Enabling compression');
-      self.app.use(compression());
+      _this.app.use(compression());
       debug('Enabling cors');
-      self.app.use(cors());
-      self.app.use(bodyParser.urlencoded({ extended: true }));
-      self.app.use(bodyParser.json({ type: 'application/json' }));
-      self.app.use(bearerToken());
+      _this.app.use(cors());
+      _this.app.use(bodyParser.urlencoded({ extended: true }));
+      _this.app.use(bodyParser.json({ type: 'application/json' }));
+      _this.app.use(bearerToken());
 
       // Clustered Socket IO using Redis
       // This is used to support multiple Servers in a Cluster.
       // Support broadcasting to all client connections, not just the
       // ones connected to this instance.
-      self.io.adapter(self.ioredis({
+      _this.io.adapter(_this.ioredis({
         host: config.redis.host,
         port: config.redis.port,
-        retry_strategy: self.redisRetryStrategy()
+        retry_strategy: _this.redisRetryStrategy(),
       }));
 
       // Authorization of Client Connection
@@ -170,37 +191,37 @@ class Server extends Node {
       // });
 
       // parse an HTML body into a string
-      self.app.use(bodyParser.text({ type: 'text/html' }));
-      debug("Intializing Middleware");
-      self.app.use(self.containerIdentifier.containerIdentification(self.app));
+      _this.app.use(bodyParser.text({ type: 'text/html' }));
+      debug('Intializing Middleware');
+      _this.app.use(_this.containerIdentifier.containerIdentification(_this.app));
 
-      self.app.use(self.circuitBreaker.inboundMiddleware(self.app));
-      self.app.authCheck = new AuthCheckMiddleware(self.app);
-      self.app.realizationCheck = new RealizationCheckMiddleware(self.app);
+      _this.app.use(_this.circuitBreaker.inboundMiddleware(_this.app));
+      _this.app.authCheck = new AuthCheckMiddleware(_this.app);
+      _this.app.realizationCheck = new RealizationCheckMiddleware(_this.app);
 
-      if(self.isPartOfChildProcess()) {
-        self.app.use(expressMetrics({
-          cluster: true
+      if (_this.isPartOfChildProcess()) {
+        _this.app.use(expressMetrics({
+          cluster: true,
         }));
       }
 
       // Response Time Middleware
       let responseTimeMiddleware = new ResponseTimeMiddleware();
-      self.app.use(responseTimeMiddleware.computeResponseTime((time) => {
+      _this.app.use(responseTimeMiddleware.computeResponseTime((time) => {
         let metric = {
-          serviceId: self.id,
+          serviceId: _this.id,
           type: 'response.time',
-          value: Math.round(time)
+          value: Math.round(time),
         };
         debug('Response Time Metric ( server route )');
         console.log(metric);
-        if(self.app.proxy)
-          self.app.proxy.sendResponseTimeMetric(metric);
+        if (_this.app.proxy)
+          _this.app.proxy.sendResponseTimeMetric(metric);
       }));
 
-      self.getIp().then((ip) => {
-        if(ip)
-          self.app.listeningIp = ip;
+      _this.getIp().then((ip) => {
+        if (ip)
+          _this.app.listeningIp = ip;
       }).catch((err) => {
         console.log('Failed to get ip');
         console.log(err);
@@ -213,39 +234,38 @@ class Server extends Node {
   }
 
   /**
-   * Listen - Bind to configured port and listen
-   * 
-   * @returns {Promise} 
-   */
+    * Listen
+    * @returns {Promise}
+    */
   listen() {
-    let self = this;
+    let _this = this;
     let p = new Promise((resolve, reject) => {
       debug('Attempt bind on port');
       let portNum = config.port;
-      if(self.useRandomWorkerPort === true) {
+      if (_this.useRandomWorkerPort === true) {
         portNum = 0;
       }
 
-      debug(`Starting ${self.name} on ${portNum}`);
-      self.http.listen(portNum, () => {
+      debug(`Starting ${_this.name} on ${portNum}`);
+      _this.http.listen(portNum, () => {
         debug(`listening on *:${portNum}`);
-        self.app.listeningPort = self.http.address().port;
+        _this.app.listeningPort = _this.http.address().port;
         resolve();
       });
 
-
-      // Listen to messages sent from the master. Ignore everything else.
+      // Listen to messages sent from the master.
+      // Ignore everything else.
       process.on('message', (message, connection) => {
-        if (typeof message === "object" && message.hasOwnProperty("id")) {
-            self.id = message.id;
-            return;
+        if (typeof message === 'object' && message.hasOwnProperty('id')) {
+          _this.id = message.id;
+          return;
         } else if (message !== 'sticky-session:connection') {
-            return;
-        } 
+          return;
+        }
 
         // Emulate a connection event on the server by emitting the
         // event with the connection the master sent us.
-        self.http.emit('connection', connection);
+        _this.http.emit('connection', connection);
 
         connection.resume();
       });
@@ -261,29 +281,30 @@ class Server extends Node {
    * When running a service standalone, the service will be able to announce and query.
    * @param {Object} - ExitHandlerFactory
    * @param {Object} - ModelRepository
-   * 
    * @returns {Void}
    */
   announce(exitHandlerFactory, modelRepository) {
-    this.makeAnnouncement = true; /// Not being set in constructor for some reason @TODO: FIX
-    if(this.makeAnnouncement === true) {
-      if(exitHandlerFactory)
-        this._bindCleanUp(exitHandlerFactory, modelRepository);
+    let _this = this;
+
+    _this.makeAnnouncement = true; /// Not being set in constructor for some reason @TODO: FIX
+    if (_this.makeAnnouncement === true) {
+      if (exitHandlerFactory)
+        _this._bindCleanUp(exitHandlerFactory, modelRepository);
     }
 
-    if(this.makeAnnouncement === true) {
-      let self = this;
+    if (_this.makeAnnouncement === true) {
       // Discovery Proxy -- init / announce
       this.getMe().then((me) => {
         debug(me);
-        debug(`http://${this.discoveryHost}:${this.discoveryPort}`);
-        this.proxyLib.connect({addr:`http://${this.discoveryHost}:${this.discoveryPort}`}, (err, p) => {
-          p.bind({ descriptor: me, types: self.types });
-          self.boundProxy = p;
-          self.app.proxy = p;
-          self.app.dependencies = self.types;
+        debug(`http://${_this.discoveryHost}:${_this.discoveryPort}`);
+        let addr = `http://${_this.discoveryHost}:${_this.discoveryPort}`;
+        this.proxyLib.connect({ addr: addr }, (err, p) => {
+          p.bind({ descriptor: me, types: _this.types });
+          _this.boundProxy = p;
+          _this.app.proxy = p;
+          _this.app.dependencies = _this.types;
 
-          self.emitProxyReady(p);
+          _this.emitProxyReady(p);
         });
       }).catch((err) => {
         console.log(err);
@@ -303,50 +324,56 @@ class Server extends Node {
    * Remember all access to a 'worker' runs through the master port binding.
    * @param {Object} - ExitHandlerFactory
    * @param {Object} - ModelRepository
-   * 
    * @returns {Void}
    */
   query(exitHandlerFactory, modelRepository) {
-    let self = this;
-    if(exitHandlerFactory)
-      this._bindCleanUp(exitHandlerFactory, modelRepository);
-    debug(`http://${this.discoveryHost}:${this.discoveryPort}`);
-    this.proxyLib.connect({addr:`http://${this.discoveryHost}:${this.discoveryPort}`}, (err, p) => {
-        p.bind({ types: self.types });
-        self.boundProxy = p;
-        self.app.proxy = p;
-        self.app.dependencies = self.types;
+    let _this = this;
+    if (exitHandlerFactory)
+      _this._bindCleanUp(exitHandlerFactory, modelRepository);
+    let addr = `http://${this.discoveryHost}:${this.discoveryPort}`;
+    debug(addr);
+    _this.proxyLib.connect({ addr: addr }, (err, p) => {
+      p.bind({ types: _this.types });
+      _this.boundProxy = p;
+      _this.app.proxy = p;
+      _this.app.dependencies = _this.types;
 
-        self.emitProxyReady(p);
-     });
+      _this.emitProxyReady(p);
+    });
   }
 
   /**
    * Load Http Routes
    * Scan all Routes in service and attach them to the express app.
-   * 
+   * @params {String} - optional app root path override
    * @returns {Void}
    */
-  loadHttpRoutes() {
-    debug("Loading Http Routes");
-    let self = this;
-    glob([appRoot.path + "/api/v1/routes/*.routes.js",appRoot.path + "/app/routes/*.routes.js"] , {}, (err, files) => {
-      for(let f in files) {
-        require(files[f])(self.app);
+  loadHttpRoutes(appRootPathOverride) {
+    debug('Loading Http Routes');
+    let _this = this;
+    let rootPath = appRootPathOverride || appRoot.path;
+    glob([
+        rootPath + '/api/v1/routes/*.routes.js',
+        rootPath + '/app/routes/*.routes.js',
+      ], {}, (err, files) => {
+      for (let f in files) {
+        require(files[f])(_this.app);
+        _this.routeCount += 1;
       }
 
-      // Last Middleware -- @TODO - Allow the passing in of a function to load additional outbound Middleware
-      self.app.use(self.circuitBreaker.outboundMiddleware(self.app));
+      _this.emit('routes.loaded', _this);
+
+      //@TODO - Allow the passing in of a function to load additional outbound Middleware
+      _this.app.use(_this.circuitBreaker.outboundMiddleware(_this.app));
+
     });
   }
 
   /**
    * Cleanup handler
    * Perform any necessary cleanup for the server on exit.
-   * 
    * @param {Object} - ExitHandlerFactory
    * @param {Object} - ModelRepository
-   * 
    * @returns {Void}
    */
   _bindCleanUp(exitHandlerFactory, modelRepository) {
@@ -356,13 +383,13 @@ class Server extends Node {
     let exitHandler = exitHandlerFactory(this.id, modelRepository);
 
     //do something when app is closing
-    process.on('exit', exitHandler.bind(null,{cleanup:true}));
+    process.on('exit', exitHandler.bind(null, { cleanup: true }));
 
     //catches ctrl+c event
-    process.on('SIGINT', exitHandler.bind(null, {cleanup:true}));
+    process.on('SIGINT', exitHandler.bind(null, { cleanup: true }));
 
     //catches uncaught exceptions
-    process.on('uncaughtException', exitHandler.bind(null, {cleanup:true}));
+    process.on('uncaughtException', exitHandler.bind(null, { cleanup: true }));
   }
 
 }

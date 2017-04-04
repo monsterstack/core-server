@@ -20,7 +20,7 @@ class ServiceError {
    */
   toJSON() {
     return {
-      errorMessage: this.errorMessage
+      errorMessage: this.errorMessage,
     };
   }
 

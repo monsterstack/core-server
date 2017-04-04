@@ -14,10 +14,10 @@ class HealthService {
   }
 
   _cpuAverage() {
-    let self = this;
-    let cpus = self.os.cpus();
-    let total = self._totalCpu(cpus);
-    return {idle: total.totalIdle/cpus.length, total: total.totalTick/cpus.length};
+    let _this = this;
+    let cpus = _this.os.cpus();
+    let total = _this._totalCpu(cpus);
+    return { idle: total.totalIdle / cpus.length, total: total.totalTick / cpus.length };
   }
 
   /**
@@ -25,25 +25,25 @@ class HealthService {
    * @returns {Promise Chain}
    */
   getHealth() {
-    let self = this;
+    let _this = this;
     let p = new Promise((resolve, reject) => {
-      let loadAvg = self.os.loadavg();
-      let totalLoad = self._totalLoad(loadAvg);
+      let loadAvg = _this.os.loadavg();
+      let totalLoad = _this._totalLoad(loadAvg);
 
-      let finalLoadAvg = totalLoad/(loadAvg.length);
+      let finalLoadAvg = totalLoad / (loadAvg.length);
 
-      let cpuFirstMeasure = this._cpuAverage();
+      let cpuFirstMeasure = _this._cpuAverage();
 
       const calculation = () => {
-        let cpuSecondMeasure = this._cpuAverage();
+        let cpuSecondMeasure = _this._cpuAverage();
 
-        let percentageCPU = self._calculatePercentageCPU(cpuFirstMeasure, cpuSecondMeasure);
+        let percentageCPU = _this._calculatePercentageCPU(cpuFirstMeasure, cpuSecondMeasure);
 
         resolve({
           loadAvg: finalLoadAvg,
-          cpuPercentUsage: percentageCPU
+          cpuPercentUsage: percentageCPU,
         });
-      }
+      };
 
       setTimeout(calculation, 10);
     });
@@ -58,7 +58,7 @@ class HealthService {
     let idleDiff = secondMeasure.idle - firstMeasure.idle;
     let totalDiff = secondMeasure.total - firstMeasure.total;
 
-    let percentageCPU = 100 - ~~(100 * (idleDiff/totalDiff));
+    let percentageCPU = 100 - ~~(100 * (idleDiff / totalDiff));
     return percentageCPU;
   }
 
@@ -82,7 +82,7 @@ class HealthService {
     let totalIdle = 0;
 
     cpus.forEach((cpu) => {
-      for(let type in cpu.times) {
+      for (let type in cpu.times) {
         totalTick += cpu.times[type];
       }
 
@@ -90,7 +90,7 @@ class HealthService {
     });
 
     // CPU Count
-    return { totalTick: totalTick, totalIdle: totalIdle};
+    return { totalTick: totalTick, totalIdle: totalIdle };
   }
 }
 

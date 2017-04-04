@@ -7,14 +7,14 @@ class ProxyCacheService {
   }
 
   cache() {
-    let self = this;
+    let _this = this;
 
     let promise = null;
 
-    if(self.proxy) {
-      promise = self.proxy.table();
+    if (_this.proxy) {
+      promise = _this.proxy.table();
     } else {
-      promise = new Promise((resolve, reject) => { resolve([])});
+      promise = new Promise((resolve, reject) => { resolve([]); });
     }
 
     return promise;

@@ -1,0 +1,19 @@
+{
+  "port": 10616,
+  "discovery": {
+    "host": "localhost",
+    "port": 7616
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379
+  },
+  "stash": {
+    "type": "tcp",
+    "host": "localhost",
+    "port": 9600
+  },
+  "websockets": {
+    "enabled": true
+  }
+}

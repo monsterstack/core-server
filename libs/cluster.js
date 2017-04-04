@@ -5,7 +5,7 @@ const config = require('config');
 const cluster = require('cluster');
 const net = require('net');
 const Leader = require('./leader');
-const Hash = require( './hash').Hash;
+const Hash = require('./hash').Hash;
 const expressMetrics = require('express-metrics');
 
 const Node = require('./node').Node;
@@ -39,7 +39,7 @@ class Cluster extends Node {
 
     this.clusterArgs = ['--use', 'http', '--randomWorkerPort', 'true', '--announce', 'false'];
 
-    if(options.overridesPath) {
+    if (options.overridesPath) {
       this.clusterArgs.push('--overrides');
       this.clusterArgs.push(options.overridesPath);
     }
@@ -50,7 +50,7 @@ class Cluster extends Node {
 
     this.proxy = require('discovery-proxy');
 
-    if(options.numWorkers) {
+    if (options.numWorkers) {
       this.numCPUs = options.numWorkers;
     }
 
@@ -60,8 +60,8 @@ class Cluster extends Node {
     this.iAmMaster = false;
 
     // All hell breaks loose if announcement is missing.
-    if(announcement === undefined)
-      throw new Error("Missing Announcement");
+    if (announcement === undefined)
+      throw new Error('Missing Announcement');
 
     this.announcement = announcement;
 
@@ -70,7 +70,7 @@ class Cluster extends Node {
     this.cluster.setupMaster({
       exec: 'server.js',
       args: this.clusterArgs,
-      silent: false
+      silent: false,
     });
   }
 
@@ -80,7 +80,6 @@ class Cluster extends Node {
    * Also, supplement with endpoint details using known ip address and configured port.
    * @param config {Object}
    * @param portOverride {Number}
-   * 
    * @returns {Promise}
    */
   getMe(config, portOverride) {
@@ -95,16 +94,17 @@ class Cluster extends Node {
       region: this.announcement.region,
       stage: this.announcement.stage,
       status: 'Online',
-      version: this.announcement.version
+      version: this.announcement.version,
     };
 
     let myPort = config.port;
-    if(portOverride) {
+    if (portOverride) {
       myPort = portOverride;
     }
 
     let p = this.getIp().then((ip) => {
-      descriptor.endpoint = "http://"+ip+":"+myPort;
+      let endpoint = `http://${ip}:${myPort}`;
+      descriptor.endpoint = endpoint;
       return descriptor;
     });
 
@@ -117,20 +117,19 @@ class Cluster extends Node {
    *
    * Sample ExitHandler.
    * @TODO: Add Sample Here.
-   * 
    * @param exitHandler {Object}
    * @returns {Void}
    */
   bindExitHandler(exitHandler) {
     process.stdin.resume();//so the program will not close instantly
     //do something when app is closing
-    process.on('exit', exitHandler.bind(null,{cleanup:true}));
+    process.on('exit', exitHandler.bind(null, { cleanup: true }));
 
     //catches ctrl+c event
-    process.on('SIGINT', exitHandler.bind(null, {cleanup:true}));
+    process.on('SIGINT', exitHandler.bind(null, { cleanup: true }));
 
     //catches uncaught exceptions
-    process.on('uncaughtException', exitHandler.bind(null, {cleanup:true}));
+    process.on('uncaughtException', exitHandler.bind(null, { cleanup: true }));
   }
 
   /**
@@ -140,41 +139,42 @@ class Cluster extends Node {
    * @returns {Void}
    */
   announce(config, port) {
-    let self = this;
+    let _this = this;
+
     //Dispatch Proxy -- init / announce
-    self.getMe(config, port).then((me) => {
+    _this.getMe(config, port).then((me) => {
       debug(me);
       let discoveryHost = config.discovery.host;
       let discoveryPort = config.discovery.port;
-      self.proxy.connect({addr:`http://${discoveryHost}:${discoveryPort}`}, (err, p) => {
-        if(err) {
+      let addr = `http://${discoveryHost}:${discoveryPort}`;
+      _this.proxy.connect({ addr: addr }, (err, p) => {
+        if (err) {
           console.log(err);
         } else {
           // Clusters only announce.  Leave query to workers.
           debug('Binding to Discovery Service and announcing...');
           debug(me);
           p.bind({ descriptor: me, types: [] });
-          self.proxy = p;
+          _this.proxy = p;
         }
       });
     }).catch((err) => {
-      console.log("******************** Error **********")
+      console.log('******************** Error **********');
       console.log(err);
     });
   }
 
   /**
    * Reannounce
-   * 
    * @returns {Void}
    */
   reannounce() {
-    if(this.proxy) {
+    if (this.proxy) {
       debug('Reannouncing...');
-      let self = this;
-      let port = self.clusterPort;
+      let _this = this;
+      let port = _this.clusterPort;
       this.getMe(config, port).then((me) => {
-        self.proxy.client.sendInitReq(me, []);
+        _this.proxy.client.sendInitReq(me, []);
       }).catch((err) => {
         console.log(err);
       });
@@ -187,56 +187,57 @@ class Cluster extends Node {
    * external cluster members.
    *
    * self.name will be used as the Cluster Group Name.
-   * 
    * @returns {Void}
    */
   start() {
-    let self = this;
-    if (self.cluster.isMaster) {
+    let _this = this;
+    if (_this.cluster.isMaster) {
 
       // Fork workers. One per CPU for maximum effectiveness
       for (let i = 0; i < self.numCPUs; i++) {
-          !function spawn(i) {
-              self.workers[i] = self.cluster.fork();
+        !function spawn(i) {
+          self.workers[i] = self.cluster.fork();
 
-              self.workers[i].on('exit', function() {
-                  console.error('sticky-session: worker died');
-                  setTimeout(() => {
-                    spawn(i);
-                  }, 2000);
-              });
+          self.workers[i].on('exit', function () {
+            console.error('sticky-session: worker died');
+            setTimeout(() => {
+              spawn(i);
+            }, 2000);
+          });
 
-              self.workers[i].send({ id: self.id });
+          self.workers[i].send({ id: self.id });
 
-          }(i);
+        }(i);
       }
 
-      self.cluster.on('listening', (worker, address) => {
-          debug('A worker is now connected to ' + address.address + ':' + address.port);
+      _this.cluster.on('listening', (worker, address) => {
+        debug('A worker is now connected to ' + address.address + ':' + address.port);
       });
 
-      self.cluster.on('online', (worker) => {
-          debug("Worker is online");
+      _this.cluster.on('online', (worker) => {
+        debug('Worker is online');
       });
 
       let server = net.createServer({ pauseOnConnect: true }, (c) => {
-          let seed = ~~(Math.random() * 1e9);
-          let hasher = new Hash();
-          // Get int31 hash of ip
-          let worker,
-              ipIndex = hasher.ipHash((c.remoteAddress || '').split(/\./g), seed);
-          // Pass connection to worker
-          worker = self.workers[ipIndex%self.workers.length];
-          try {
-            worker.send('sticky-session:connection', c);
-          } catch (err) { 
-            console.log(err);
-          }
+        let seed = ~~(Math.random() * 1e9);
+        let hasher = new Hash();
+
+        // Get int31 hash of ip
+        let worker;
+        let ipIndex = hasher.ipHash((c.remoteAddress || '').split(/\./g), seed);
+
+        // Pass connection to worker
+        worker = _this.workers[ipIndex % _this.workers.length];
+        try {
+          worker.send('sticky-session:connection', c);
+        } catch (err) {
+          console.log(err);
+        }
       });
 
       let myPort = config.port;
 
-      if(process.env.PORT) {
+      if (process.env.PORT) {
         myPort = process.env.PORT;
       }
 
@@ -246,17 +247,17 @@ class Cluster extends Node {
         setTimeout(() => {
           //Dispatch Proxy -- init / announce
           debug('Cluster Announce');
-          self.announce(config, server.address().port);
+          _this.announce(config, server.address().port);
         }, 6000);
       });
 
-      expressMetrics.listen(myPort+1);
+      expressMetrics.listen(myPort + 1);
 
       /** Deal with Election of Group Leader **/
       let redisClient = redis.createClient({
         host: config.redis.host,
         port: config.redis.port || 6379,
-        retry_strategy: self.redisRetryStrategy()
+        retry_strategy: self.redisRetryStrategy(),
       });
 
       redisClient.on('error', (err) => {
@@ -271,7 +272,7 @@ class Cluster extends Node {
         let redisSub = redis.createClient({
           host: config.redis.host,
           port: config.redis.port || 6379,
-          retry_strategy: self.redisRetryStrategy()
+          retry_strategy: self.redisRetryStrategy(),
         });
 
         redisSub.on('error', (err) => {
@@ -280,7 +281,7 @@ class Cluster extends Node {
 
         let leader = new Leader(redisClient, redisSub);
         leader.onStepUp((groupName) => {
-          debug("******************* I am master");
+          debug('******************* I am master');
           debug(`Steppoing up on ${groupName}`);
           self.iAmMaster = true;
         });
@@ -292,7 +293,6 @@ class Cluster extends Node {
 
         leader.join(`${this.clusterName}-Cluster`);
       });
-      
     }
   }
 }

@@ -8,9 +8,9 @@ const RealizationCheckMiddleware = require('discovery-middleware').RealizationCh
 
 
 // Public
-module.exports.ServiceError = require('./errors/error');
-module.exports.HealthService = require('./services/healthService');
-module.exports.SwaggerService = require('./services/swaggerService');
-module.exports.ProxyCacheService = require('./services/proxyCacheService');
+module.exports.ServiceError = require('./libs/error');
+module.exports.HealthService = require('./libs/services/healthService');
+module.exports.SwaggerService = require('./libs/services/swaggerService');
+module.exports.ProxyCacheService = require('./libs/services/proxyCacheService');
 module.exports.Cluster = Cluster;
 module.exports.Server = Server;

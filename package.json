@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cd tests && mocha *-test.js --reporter nyan"
+    "test": "cd tests && mocha *-test.js --reporter nyan",
+    "checkStyle": "jscs libs --reporter unix"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +27,7 @@
     "http-status": "^1.0.1",
     "ip": "^1.1.4",
     "multi-glob": "^1.0.1",
+    "node-uuid": "^1.4.8",
     "once": "^1.4.0",
     "path": "^0.12.7",
     "promise": "^7.1.1",
@@ -36,5 +38,8 @@
     "socket.io": "^1.7.2",
     "socket.io-redis": "^3.1.0",
     "stash": "https://github.com/monsterstack/stash#development"
+  },
+  "devDependencies": {
+    "discovery-proxy": "https://github.com/monsterstack/discovery-proxy#development"
   }
 }

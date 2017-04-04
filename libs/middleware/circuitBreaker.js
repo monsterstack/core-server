@@ -10,7 +10,7 @@ class CircuitBreakerMiddleware {
     this.maxFailureAllowed = 5;
     this.resetDelay = 10000;
 
-    if(options) {
+    if (options) {
       this.maxFailureAllowed = options.maxFailureAllowed || 5;
     }
   }
@@ -22,57 +22,59 @@ class CircuitBreakerMiddleware {
    *   - if true => respond with unavailable.
    */
   inboundMiddleware(app) {
-    let self = this;
+    let _this = this;
     return (req, res, next) => {
       let path = req.path;
-      if(self.pathCounts.hasOwnProperty(path)) {
+      if (_this.pathCounts.hasOwnProperty(path)) {
         // ignoring
-        if(self.pathCounts[path] >= self.maxFailureAllowed) {
-          res.status(HttpStatus.SERVICE_UNAVAILABLE).send( {
-            errorMessage: "Service Unavailable"
+        if (_this.pathCounts[path] >= _this.maxFailureAllowed) {
+          res.status(HttpStatus.SERVICE_UNAVAILABLE).send({
+            errorMessage: 'Service Unavailable',
           });
         } else {
           next();
         }
       } else {
-        self.pathCounts[path] = 0;
+        _this.pathCounts[path] = 0;
         next();
       }
-    }
+    };
   }
 
   outboundMiddleware(app) {
-    let self = this;
+    let _this = this;
     return (req, res, next) => {
       let status = res.statusCode;
-      if(status) {
-        if(status >= HttpStatus.INTERNAL_SERVER_ERROR 
+      if (status) {
+        if (status >= HttpStatus.INTERNAL_SERVER_ERROR
           && status != HttpStatus.SERVICE_UNAVAILABLE) {
-          self.pathCounts[path] = self.pathCounts[path] + 1;
+          _this.pathCounts[path] = _this.pathCounts[path] + 1;
 
-          if(self.pathCounts[path] >= self.maxFailureAllowed) {
+          if (_this.pathCounts[path] >= _this.maxFailureAllowed) {
             setTimeout(() => {
-              self.pathCounts[path] = 0;
-            }, self.resetDelay);
+              _this.pathCounts[path] = 0;
+            }, _this.resetDelay);
           }
         }
+
         next();
       } else {
         next();
       }
-    }
+    };
   }
 
   _scheduleCleanup() {
-      setInterval(() => {
-        let keys = Object.keys(self.pathCounts);
+    let _this = this;
+    setInterval(() => {
+      let keys = Object.keys(_this.pathCounts);
 
-        keys.forEach((key) => {
-          if(self.pathCounts[key] < 3) {
-            self.pathCounts[key] = 0;
-          }
-        });
-      }, this.windowInMillis);
+      keys.forEach((key) => {
+        if (_this.pathCounts[key] < 3) {
+          _this.pathCounts[key] = 0;
+        }
+      });
+    }, _this.windowInMillis);
   }
 }
 
