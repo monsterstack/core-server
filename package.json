@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "cd tests && mocha *-test.js --reporter nyan",
-    "checkStyle": "jscs libs --reporter unix"
+    "checkStyle": "jscs libs tests --reporter unix"
   },
   "author": "",
   "license": "ISC",
@@ -34,6 +34,7 @@
     "random-port": "^0.1.0",
     "redis": "~0.9.1",
     "security-middleware": "https://github.com/monsterstack/security-middleware#development",
+    "tenant-middleware": "https://github.com/monsterstack/tenant-middleware#development",
     "sha256": "^0.2.0",
     "socket.io": "^1.7.2",
     "socket.io-redis": "^3.1.0",

@@ -16,6 +16,8 @@ const expressMetrics = require('express-metrics');
 
 const sm = require('security-middleware');
 const dm = require('discovery-middleware');
+const tm = require('tenant-middleware');
+
 const cim = require('./middleware/containerIdentifier');
 const cbm = require('./middleware/circuitBreaker');
 const rtm = require('./middleware/responseTime');
@@ -25,6 +27,7 @@ const RealizationCheckMiddleware = dm.RealizationCheckMiddleware;
 const CircuitBreakerMiddleware = cbm.CircuitBreakerMiddleware;
 const ContainerIdentifierMiddleware = cim.ContainerIdentifierMiddleware;
 const ResponseTimeMiddleware = rtm.ResponseTimeMiddleware;
+const TenantDbCreationMiddleware = tc.TenantDBCreationMiddleware;
 
 class Server extends Node {
   /**
@@ -198,6 +201,7 @@ class Server extends Node {
       _this.app.use(_this.circuitBreaker.inboundMiddleware(_this.app));
       _this.app.authCheck = new AuthCheckMiddleware(_this.app);
       _this.app.realizationCheck = new RealizationCheckMiddleware(_this.app);
+      _this.app.tenantDbCreation = new TenantDbCreationMiddleware(_this.app);
 
       if (_this.isPartOfChildProcess()) {
         _this.app.use(expressMetrics({
@@ -352,15 +356,18 @@ class Server extends Node {
     debug('Loading Http Routes');
     let _this = this;
     let rootPath = appRootPathOverride || appRoot.path;
+    let apiRoutes = rootPath + '/api/v1/routes/*.routes.js';
+    let appRoutes = rootPath + '/app/routes/*.routes.js';
+
     glob([
-        rootPath + '/api/v1/routes/*.routes.js',
-        rootPath + '/app/routes/*.routes.js',
+        apiRoutes,
+        appRoutes,
       ], {}, (err, files) => {
       for (let f in files) {
         require(files[f])(_this.app);
-        _this.routeCount += 1;
       }
 
+      _this.routeCount = files.length;
       _this.emit('routes.loaded', _this);
 
       //@TODO - Allow the passing in of a function to load additional outbound Middleware
