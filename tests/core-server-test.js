@@ -20,7 +20,6 @@ describe('core-server-test', () => {
       server.loadHttpRoutes(appRoot.path + '/test');
 
       server.on('routes.loaded', () => {
-        console.log(server.routeCount);
         done();
       });
     });

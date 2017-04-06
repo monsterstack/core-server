@@ -20,7 +20,6 @@ describe('hash-test', (done) => {
 
     let hasher = new Hash();
     let result = hasher.ipHash([[0, 1], [2, 3], [4, 5]], 985350543);
-    console.log(result);
     if (result === expectation) {
       done();
     } else {

@@ -149,7 +149,7 @@ class Cluster extends Node {
       let addr = `http://${discoveryHost}:${discoveryPort}`;
       _this.proxy.connect({ addr: addr }, (err, p) => {
         if (err) {
-          console.log(err);
+          console.error(err);
         } else {
           // Clusters only announce.  Leave query to workers.
           debug('Binding to Discovery Service and announcing...');
@@ -159,8 +159,7 @@ class Cluster extends Node {
         }
       });
     }).catch((err) => {
-      console.log('******************** Error **********');
-      console.log(err);
+      console.error(err);
     });
   }
 
@@ -176,7 +175,7 @@ class Cluster extends Node {
       this.getMe(config, port).then((me) => {
         _this.proxy.client.sendInitReq(me, []);
       }).catch((err) => {
-        console.log(err);
+        console.error(err);
       });
     }
   }
@@ -231,7 +230,7 @@ class Cluster extends Node {
         try {
           worker.send('sticky-session:connection', c);
         } catch (err) {
-          console.log(err);
+          console.error(err);
         }
       });
 

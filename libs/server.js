@@ -218,7 +218,7 @@ class Server extends Node {
           value: Math.round(time),
         };
         debug('Response Time Metric ( server route )');
-        console.log(metric);
+        debug(metric);
         if (_this.app.proxy)
           _this.app.proxy.sendResponseTimeMetric(metric);
       }));
@@ -227,8 +227,8 @@ class Server extends Node {
         if (ip)
           _this.app.listeningIp = ip;
       }).catch((err) => {
-        console.log('Failed to get ip');
-        console.log(err);
+        console.error('Failed to get ip');
+        console.error(err);
       });
 
       resolve();
@@ -311,7 +311,7 @@ class Server extends Node {
           _this.emitProxyReady(p);
         });
       }).catch((err) => {
-        console.log(err);
+        console.error(err);
       });
     }
   }
