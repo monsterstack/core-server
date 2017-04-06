@@ -27,7 +27,7 @@ const RealizationCheckMiddleware = dm.RealizationCheckMiddleware;
 const CircuitBreakerMiddleware = cbm.CircuitBreakerMiddleware;
 const ContainerIdentifierMiddleware = cim.ContainerIdentifierMiddleware;
 const ResponseTimeMiddleware = rtm.ResponseTimeMiddleware;
-const TenantDbCreationMiddleware = tc.TenantDBCreationMiddleware;
+const TenantDbCreationMiddleware = tm.TenantDBCreationMiddleware;
 
 class Server extends Node {
   /**
