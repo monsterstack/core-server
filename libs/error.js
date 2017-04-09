@@ -10,7 +10,6 @@ class ServiceError {
    * @param message {String}
    */
   constructor(status, message) {
-    super();
     this.status = status;
     this.errorMessage = message;
   }
