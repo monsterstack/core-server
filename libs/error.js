@@ -3,7 +3,7 @@
 /**
  * ServiceError
  */
-class ServiceError {
+class ServiceError extends Error {
   /**
    * Create ServiceError
    * @param status {Number}
