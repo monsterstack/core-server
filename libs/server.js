@@ -1,5 +1,6 @@
 'use strict';
 const debug = require('debug')('core-server');
+const domain = require('domain');
 const glob = require('multi-glob').glob;
 const Promise = require('promise');
 const config = require('config');
@@ -13,6 +14,7 @@ const bodyParser = require('body-parser');
 const bearerToken = require('express-bearer-token');
 const Node = require('./node').Node;
 const expressMetrics = require('express-metrics');
+const addRequestIdMiddleware = require('express-request-id');
 
 const sm = require('security-middleware');
 const dm = require('discovery-middleware');
@@ -196,6 +198,7 @@ class Server extends Node {
       // parse an HTML body into a string
       _this.app.use(bodyParser.text({ type: 'text/html' }));
       debug('Intializing Middleware');
+      _this.app.use(addRequestIdMiddleware());
       _this.app.use(_this.containerIdentifier.containerIdentification(_this.app));
 
       _this.app.use(_this.circuitBreaker.inboundMiddleware(_this.app));
@@ -208,6 +211,15 @@ class Server extends Node {
           cluster: true,
         }));
       }
+
+      // Application Context Middleware
+      _this.app.use((req, res, next) => {
+        let domain = domain.create();
+        domain.applicationContext = {
+          requestId: req.id,
+        };
+        next();
+      });
 
       // Response Time Middleware
       let responseTimeMiddleware = new ResponseTimeMiddleware();

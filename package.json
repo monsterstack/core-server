@@ -23,6 +23,7 @@
     "express": "^4.14.0",
     "express-bearer-token": "^2.1.0",
     "express-metrics": "^1.1.0",
+    "express-request-id": "^1.4.0",
     "glob": "^7.1.1",
     "http-status": "^1.0.1",
     "ip": "^1.1.4",
@@ -34,11 +35,11 @@
     "random-port": "^0.1.0",
     "redis": "~0.9.1",
     "security-middleware": "https://github.com/monsterstack/security-middleware#development",
-    "tenant-middleware": "https://github.com/monsterstack/tenant-middleware#development",
     "sha256": "^0.2.0",
     "socket.io": "^1.7.2",
     "socket.io-redis": "^3.1.0",
-    "stash": "https://github.com/monsterstack/stash#development"
+    "stash": "https://github.com/monsterstack/stash#development",
+    "tenant-middleware": "https://github.com/monsterstack/tenant-middleware#development"
   },
   "devDependencies": {
     "discovery-proxy": "https://github.com/monsterstack/discovery-proxy#development"
