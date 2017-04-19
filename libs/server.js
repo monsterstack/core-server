@@ -214,8 +214,8 @@ class Server extends Node {
 
       // Application Context Middleware
       _this.app.use((req, res, next) => {
-        let domain = domain.create();
-        domain.applicationContext = {
+        let d = domain.create();
+        d.applicationContext = {
           requestId: req.id,
         };
         next();
