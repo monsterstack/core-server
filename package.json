@@ -39,6 +39,7 @@
     "socket.io": "^1.7.2",
     "socket.io-redis": "^3.1.0",
     "stash": "https://github.com/monsterstack/stash#development",
+    "app-context": "https://github.com/monsterstack/app-context#development",
     "tenant-middleware": "https://github.com/monsterstack/tenant-middleware#development"
   },
   "devDependencies": {
