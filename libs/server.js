@@ -219,7 +219,9 @@ class Server extends Node {
         let d = domain.create();
         d.applicationContext = new ApplicationContext();
         d.applicationContext.set('requestId', req.id);
-        next();
+        d.run(() => {
+          next();
+        });
       });
 
       // Response Time Middleware
