@@ -200,6 +200,17 @@ class Server extends Node {
       // parse an HTML body into a string
       _this.app.use(bodyParser.text({ type: 'text/html' }));
       debug('Intializing Middleware');
+
+      // Application Context Middleware
+      _this.app.use((req, res, next) => {
+        let d = domain.create();
+        d.applicationContext = new ApplicationContext();
+        d.applicationContext.set('requestId', req.id);
+        d.run(() => {
+          next();
+        });
+      });
+
       _this.app.use(addRequestIdMiddleware());
       _this.app.use(_this.containerIdentifier.containerIdentification(_this.app));
 
@@ -213,16 +224,6 @@ class Server extends Node {
           cluster: true,
         }));
       }
-
-      // Application Context Middleware
-      _this.app.use((req, res, next) => {
-        let d = domain.create();
-        d.applicationContext = new ApplicationContext();
-        d.applicationContext.set('requestId', req.id);
-        d.run(() => {
-          next();
-        });
-      });
 
       // Response Time Middleware
       let responseTimeMiddleware = new ResponseTimeMiddleware();
