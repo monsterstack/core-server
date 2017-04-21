@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "cd tests && mocha *-test.js --reporter nyan",
+    "fixStyle": "jscs --fix libs tests",
     "checkStyle": "jscs libs tests --reporter unix"
   },
   "author": "",

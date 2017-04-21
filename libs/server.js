@@ -1,6 +1,9 @@
 'use strict';
 const debug = require('debug')('core-server');
-const domain = require('domain');
+
+const connectDomain = require('connect-domain');
+const domainContext = require('domain-context');
+
 const glob = require('multi-glob').glob;
 const Promise = require('promise');
 const config = require('config');
@@ -201,17 +204,27 @@ class Server extends Node {
       _this.app.use(bodyParser.text({ type: 'text/html' }));
       debug('Intializing Middleware');
 
+      var lifecycle = {
+        context: () => {
+          return {
+            applicationContext: new ApplicationContext(),
+          };
+        },
+
+        cleanup: (context) =>  {
+        },
+
+        onError: (err, context) => {
+        },
+      };
+
       // Application Context Middleware
-      _this.app.use((req, res, next) => {
-        let d = domain.create();
-        d.applicationContext = new ApplicationContext();
-        d.applicationContext.set('requestId', req.id);
-        d.run(() => {
-          next();
-        });
-      });
+      _this.app.use(connectDomain());
 
       _this.app.use(addRequestIdMiddleware());
+
+      _this.app.use(domainContext.middleware(lifecycle));
+      _this.app.use(domainContext.middlewareOnError(lifecycle));
       _this.app.use(_this.containerIdentifier.containerIdentification(_this.app));
 
       _this.app.use(_this.circuitBreaker.inboundMiddleware(_this.app));
