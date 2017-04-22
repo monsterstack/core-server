@@ -79,6 +79,20 @@ class Server extends Node {
     this.boundProxy = null;
 
     this.routeCount = 0;
+
+    this.lifecycle = {
+        context: () => {
+          return {
+            applicationContext: new ApplicationContext(),
+          };
+        },
+
+        cleanup: (context) =>  {
+        },
+
+        onError: (err, context) => {
+        },
+      };
   }
 
   /**
@@ -204,27 +218,12 @@ class Server extends Node {
       _this.app.use(bodyParser.text({ type: 'text/html' }));
       debug('Intializing Middleware');
 
-      var lifecycle = {
-        context: () => {
-          return {
-            applicationContext: new ApplicationContext(),
-          };
-        },
-
-        cleanup: (context) =>  {
-        },
-
-        onError: (err, context) => {
-        },
-      };
-
       // Application Context Middleware
       _this.app.use(connectDomain());
 
       _this.app.use(addRequestIdMiddleware());
 
-      _this.app.use(domainContext.middleware(lifecycle));
-      _this.app.use(domainContext.middlewareOnError(lifecycle));
+      _this.app.use(domainContext.middleware(_this.lifecycle));
       _this.app.use(_this.containerIdentifier.containerIdentification(_this.app));
 
       _this.app.use(_this.circuitBreaker.inboundMiddleware(_this.app));
@@ -402,6 +401,7 @@ class Server extends Node {
       //@TODO - Allow the passing in of a function to load additional outbound Middleware
       _this.app.use(_this.circuitBreaker.outboundMiddleware(_this.app));
 
+      _this.app.use(domainContext.middlewareOnError(_this.lifecycle));
     });
   }
 
