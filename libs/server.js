@@ -255,7 +255,6 @@ class Server extends Node {
         if (ip)
           _this.app.listeningIp = ip;
       }).catch((err) => {
-        console.error('Failed to get ip');
         console.error(err);
       });
 
