@@ -117,7 +117,6 @@ let Server = require('core-server').Server;
 
     // Listen for Requests
     server.listen().then(() => {
-      console.log('Up and running..');
 
       // Either Announce or Query.
       if(announce === true) {
