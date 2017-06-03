@@ -27,7 +27,7 @@ const cim = require('./middleware/containerIdentifier');
 const cbm = require('./middleware/circuitBreaker');
 const rtm = require('./middleware/responseTime');
 
-const ApplicationContext = require('app-context').ApplicationContext;
+const ApplicationContextMiddleware = require('app-context').ApplicationContextMiddleware;
 
 const AuthCheckMiddleware = sm.AuthCheckMiddleware;
 const RealizationCheckMiddleware = dm.RealizationCheckMiddleware;
@@ -60,6 +60,8 @@ class Server extends Node {
       maxFailureAllowed: 5,
     });
 
+    this.applicationContext = new ApplicationContextMiddleware();
+
     this.containerIdentifier = new ContainerIdentifierMiddleware();
 
     if (options) {
@@ -80,19 +82,19 @@ class Server extends Node {
 
     this.routeCount = 0;
 
-    this.lifecycle = {
-        context: () => {
-          return {
-            applicationContext: new ApplicationContext(),
-          };
-        },
+    // this.lifecycle = {
+    //     context: () => {
+    //       return {
+    //         applicationContext: new ApplicationContext(),
+    //       };
+    //     },
 
-        cleanup: (context) =>  {
-        },
+    //     cleanup: (context) =>  {
+    //     },
 
-        onError: (err, context) => {
-        },
-      };
+    //     onError: (err, context) => {
+    //     },
+    //   };
   }
 
   /**
@@ -223,9 +225,9 @@ class Server extends Node {
 
       _this.app.use(addRequestIdMiddleware());
 
-      _this.app.use(domainContext.middleware(_this.lifecycle));
-      _this.app.use(_this.containerIdentifier.containerIdentification(_this.app));
-
+      //_this.app.use(domainContext.middleware(_this.lifecycle));
+      //_this.app.use(_this.containerIdentifier.containerIdentification(_this.app));
+      _this.app.use(_this.applicationContext.startContext());
       _this.app.use(_this.circuitBreaker.inboundMiddleware(_this.app));
       _this.app.authCheck = new AuthCheckMiddleware(_this.app);
       _this.app.realizationCheck = new RealizationCheckMiddleware(_this.app);
@@ -400,7 +402,9 @@ class Server extends Node {
       //@TODO - Allow the passing in of a function to load additional outbound Middleware
       _this.app.use(_this.circuitBreaker.outboundMiddleware(_this.app));
 
-      _this.app.use(domainContext.middlewareOnError(_this.lifecycle));
+      // Trying Zones
+      //_this.app.use(domainContext.middlewareOnError(_this.lifecycle));
+      _this.app.use(_this.applicationContext.stopContext());
     });
   }
 
