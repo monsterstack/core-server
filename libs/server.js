@@ -1,9 +1,6 @@
 'use strict';
 const debug = require('debug')('core-server');
 
-const connectDomain = require('connect-domain');
-const domainContext = require('domain-context');
-
 const glob = require('multi-glob').glob;
 const Promise = require('promise');
 const config = require('config');
@@ -82,19 +79,6 @@ class Server extends Node {
 
     this.routeCount = 0;
 
-    // this.lifecycle = {
-    //     context: () => {
-    //       return {
-    //         applicationContext: new ApplicationContext(),
-    //       };
-    //     },
-
-    //     cleanup: (context) =>  {
-    //     },
-
-    //     onError: (err, context) => {
-    //     },
-    //   };
   }
 
   /**
@@ -225,8 +209,6 @@ class Server extends Node {
 
       _this.app.use(addRequestIdMiddleware());
 
-      //_this.app.use(domainContext.middleware(_this.lifecycle));
-      //_this.app.use(_this.containerIdentifier.containerIdentification(_this.app));
       _this.app.use(_this.applicationContext.startContext());
       _this.app.use(_this.circuitBreaker.inboundMiddleware(_this.app));
       _this.app.authCheck = new AuthCheckMiddleware(_this.app);
@@ -403,7 +385,6 @@ class Server extends Node {
       _this.app.use(_this.circuitBreaker.outboundMiddleware(_this.app));
 
       // Trying Zones
-      //_this.app.use(domainContext.middlewareOnError(_this.lifecycle));
       _this.app.use(_this.applicationContext.stopContext());
     });
   }
