@@ -204,9 +204,6 @@ class Server extends Node {
       _this.app.use(bodyParser.text({ type: 'text/html' }));
       debug('Intializing Middleware');
 
-      // Application Context Middleware
-      _this.app.use(connectDomain());
-
       _this.app.use(addRequestIdMiddleware());
 
       _this.app.use(_this.applicationContext.startContext());
