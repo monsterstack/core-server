@@ -11,6 +11,7 @@ const express = require('express');
 const path = require('path');
 const appRoot = require('app-root-path');
 const bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
 const bearerToken = require('express-bearer-token');
 const Node = require('./node').Node;
 const expressMetrics = require('express-metrics');
@@ -181,6 +182,7 @@ class Server extends Node {
       _this.app.use(cors());
       _this.app.use(bodyParser.urlencoded({ extended: true }));
       _this.app.use(bodyParser.json({ type: 'application/json' }));
+      _this.app.use(expressValidator());
       _this.app.use(bearerToken());
 
       // Clustered Socket IO using Redis
