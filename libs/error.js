@@ -8,10 +8,15 @@ class ServiceError {
    * Create ServiceError
    * @param status {Number}
    * @param message {String}
+   * @param validationErrors {Array}
    */
-  constructor(status, message) {
+  constructor(status, message, validationErrors) {
     this.status = status;
     this.errorMessage = message;
+
+    if (validationErrors) {
+      this.errors = validationErrors;
+    }
   }
 
   /**
