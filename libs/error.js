@@ -26,6 +26,7 @@ class ServiceError {
   toJSON() {
     return {
       errorMessage: this.errorMessage,
+      errors: this.errors,
     };
   }
 
