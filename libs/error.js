@@ -15,7 +15,7 @@ class ServiceError {
     this.errorMessage = message;
 
     if (validationErrors) {
-      this.errors = validationErrors;
+      this.violations = validationErrors;
     }
   }
 
@@ -36,7 +36,7 @@ class ServiceError {
    * @returns {Void}
    */
   writeResponse(res) {
-    res.status(this.status).send({ errorMessage: this.errorMessage });
+    res.status(this.status).send({ errorMessage: this.errorMessage, violations: this.violations });
   }
 }
 
