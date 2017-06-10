@@ -1,4 +1,5 @@
 'use strict';
+const Validator = require('./libs/validator');
 const Server = require('./libs/server').Server;
 const Cluster = require('./libs/cluster').Cluster;
 
@@ -14,3 +15,5 @@ module.exports.SwaggerService = require('./libs/services/swaggerService');
 module.exports.ProxyCacheService = require('./libs/services/proxyCacheService');
 module.exports.Cluster = Cluster;
 module.exports.Server = Server;
+
+module.exports.Validator = Validator;
