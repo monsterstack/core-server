@@ -1,5 +1,6 @@
 'use strict';
 const jwt = require('jsonwebtoken');
+const HttpStatus = require('http-status');
 const ServiceError = require('./error');
 
 const TOKEN_EXPIRED_ERR = 'TokenExpiredError';
