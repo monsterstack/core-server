@@ -35,9 +35,9 @@ class ApiSecretFactory {
     return token;
   }
 
-  verifySecret(secret) {
+  verifySecret(secret, key) {
     let p = new Promise((resolve, reject) => {
-      jwt.verify(secret, (err, result) => {
+      jwt.verify(secret, key, (err, result) => {
         if (err) {
           if (err.name === JSON_WEB_TOKEN_ERR) {
             reject(new ServiceError(HttpStatus.FORBIDDEN, err.message));
