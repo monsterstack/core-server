@@ -53,4 +53,4 @@ class ApiSecretFactory {
   }
 }
 
-module.exports = ApiSecretFactory;
+module.exports.ApiSecretFactory = ApiSecretFactory;
